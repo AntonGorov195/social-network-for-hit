@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Login from "./Login";
 import Posts from "./Posts";
 
@@ -7,12 +7,15 @@ export default function HomeScreen() {
     const [isLogged, setIsLogged] = useState(false);
 
     useEffect(() => {
-        
-    }, [isLogged])
+        console.log("useEffect")
+    }, [isRegister])
 
     return isRegister ? (
         <Posts />
     ) : (
-        <Login />
+        <Login onLogin={() => {
+                setIsRegister(true);
+                console.log("HIGGsdfafh");
+        }} />
     );
 }
