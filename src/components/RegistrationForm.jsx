@@ -1,6 +1,7 @@
-import {useState} from "react";
+import { useState } from "react";
+import FormInput from "./FormInput";
 
-export default function RegistrationForm (props) {
+export default function RegistrationForm(props) {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [passwordConfirm, setPasswordConfirm] = useState('');
@@ -14,14 +15,10 @@ export default function RegistrationForm (props) {
     return (
         <div>
             <form onSubmit={handelSubmit}>
-                <label>Username</label>
-                <input type={"text"} value={username} onChange={(e) => setUsername(e.target.value)} />
-                <label>email</label>
-                <input type={"email"} value={email} onChange={(e) => setEmail(e.target.value)} />
-                <label>password</label>
-                <input type={"password"} value={password} onChange={(e) => setPassword(e.target.value)} />
-                <label>passwordConfirm</label>
-                <input type={"password"} value={passwordConfirm} onChange={(e) => setPasswordConfirm(e.target.value)}/>
+                <FormInput type="text" value={username} setValue={setUsername} inputName={"Username"} />
+                <FormInput type="email" value={email} setValue={setEmail} inputName={"Email"} />
+                <FormInput type="password" value={password} setValue={setPassword} inputName={"Password"} />
+                <FormInput type="password" value={passwordConfirm} setValue={setPasswordConfirm} inputName={"Password Confirm"} />
                 <button onClick={props.onSubmit} >Register</button>
             </form>
         </div>

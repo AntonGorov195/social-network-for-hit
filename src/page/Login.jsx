@@ -1,11 +1,12 @@
-import {useState} from "react";
+import { useState } from "react";
 import RegistrationForm from "../components/RegistrationForm";
+import FormInput from "../components/FormInput";
 
 export default function Login(props) {
 
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
-    const [registrationMode, setRegistrationMode] = useState('false')
+    const [registrationMode, setRegistrationMode] = useState(false)
 
     const handleSignIn = (e) => {
         e.preventDefault()
@@ -13,19 +14,17 @@ export default function Login(props) {
     }
 
     return (
-        <div>
+        <div style={{ backgroundColor: "#b4d3f5", minHeight: "100vh", display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
             {registrationMode ?
-                <RegistrationForm/>:
-                <div>
-                    <form>
-                <label>username</label>
-                <input type={"text"} value={username} onChange={(e) => setUsername(e.target.value)} />
-                <label>password</label>
-                <input type={"password"} value={password} onChange={(e) => setPassword(e.target.value)} />
-                <button onClick={handleSignIn} >Sign in </button>
-            </form>
-          <button onClick={()=>setRegistrationMode(false)} >Sign up</button>
-            </div>}
+                <RegistrationForm /> :
+                <div style={{ display: "flex", flexDirection: "column",gap:"20px"}}>
+                    <form style={{ display: "flex", flexDirection: "column", backgroundColor: "#314b68", padding: "30px", color: "white", borderRadius: "40px" }}>
+                        <FormInput type="text" value={username} setValue={setUsername} inputName={"Username"} />
+                        <FormInput type="password" value={password} setValue={setPassword} inputName={"Password"} />
+                        <button style={{ width: "100%" }} onClick={handleSignIn} >Sign in </button>
+                    </form>
+                    <button onClick={() => setRegistrationMode(false)} >Sign up</button>
+                </div>}
         </div>
     )
 }

@@ -3,7 +3,7 @@ import Login from "./Login";
 import Posts from "./Posts";
 
 export default function HomeScreen() {
-    const [isRegister, setIsRegister] = useState(true);
+    const [isRegister, setIsRegister] = useState(false);
     const [isLogged, setIsLogged] = useState(true);
 
     useEffect(() => {
