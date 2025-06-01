@@ -1,67 +1,50 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-const bodyParser = require("body-parser");
+const {post} = require("axios");
+require("dotenv").config();
 
 const app = express();
 app.use(cors());
-app.use(bodyParser.json());
+app.use(express.json());
 
-mongoose.connect(
-    "mongodb+srv://admin:QiRiP7RKlZbBNqVL@cluster0.zgymhm9.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
-);
+const PORT = process.env.PORT || 5000;
+// Connect to MongoDB
+mongoose
+    .connect(process.env.MONGO_URI, {
+    })
+    .then(() => {
+        console.log("MongoDB connected");
+        app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+    })
+    .catch((err) => console.error("MongoDB error:", err));
 
-const userSchema = new mongoose.Schema({
-    name: String,
-    email: String,
+// Example schema
+const PostsSchema = new mongoose.Schema({
+    PostId : String,
+    PostAuthor : String,
+    PostContent : String,
+    PostDate : Date,
+    PostGroup: String,
+    PostLable : String,
 });
-const User = mongoose.model("User", userSchema);
+const Post = mongoose.model("posts_collection", PostsSchema,"posts_collection");
 
-app.post("/api/users", async (req, res) => {
-    const { command, data } = req.body;
-
-    try {
-        switch (command) {
-            case "insert":
-                const newUser = new User({
-                    name: data.name,
-                    email: data.email,
-                });
-                await newUser.save();
-                console.log(newUser);
-                return res.json({
-                    message: "user inserted successfully",
-                    user: newUser,
-                });
-            case "select":
-                const users = await User.find({});
-                return res.json({ message: "users fetched ", users });
-            case "update":
-                const updateUser = await User.findByIdAndUpdate(
-                    data.userId,
-                    { email: data.newEmail },
-                    { new: true }
-                );
-                if (!updateUser) {
-                    return res.status(404).json({ message: "user not found" });
-                }
-                return res.json({ message: "user updated ", user: updateUser });
-            case "delete":
-                const deleteUser = await User.findByIdAndDelete(data.userId);
-                if (!deleteUser) {
-                    return res.status(404).json({ message: "user not found" });
-                }
-                return res.json({ message: "user deleted" });
-            default:
-                return res.status(400).json({ message: "unknown command" });
-        }
-    } catch (error) {
-        console.log(error);
-        return res.status(500).json({ message: "server error" });
-    }
+// API routes
+app.get("/api/posts", async (req, res) => {
+    console.log("try to get posts");
+    const user = req.query.userid;
+    console.log(typeof (user)+" " + user);
+    console.log("Using database:", Post.db.name);
+    console.log("Using collection:", Post.collection.name);
+    const posts = await Post.find({PostAuthor: "123"});
+    console.log(posts);
+    res.json(posts);
 });
 
-const PORT = 5000;
-app.listen(PORT, () => {
-    console.log("server running on port " + PORT);
+app.post("/api/items", async (req, res) => {
+    console.log("!");
+    const newItem = new Item({ name: req.body.name });
+    await newItem.save();
+    res.json(newItem);
 });

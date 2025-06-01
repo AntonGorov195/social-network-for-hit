@@ -1,7 +1,12 @@
 export default function Table(props) {
     return (
         <div>
-            Table
+            <thead>
+            <tr>
+                <th>Author</th>
+                <th>Content</th>
+            </tr>
+            </thead>
         </div>
     )
 }
