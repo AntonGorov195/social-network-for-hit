@@ -46,16 +46,22 @@
     --color-dark: #314b68;
     --color-link: #ffddc1;
     --color-active: #f7d371;
-    --color-light-red: #f7c2dc;
+    --color-light-red: #fabce2;
 }
-
+*{
+  box-sizing: border-box;
+}
 body {
     background-color: var(--color-light);
     padding: 30px;
 }
-.post {
+/* .post {
     color: var(--color-light);
     background-color: var(--color-dark);
     border-radius: 3rem;
-    margin: 10px;
+} */
+input::placeholder {
+  font-weight: bold;
+  opacity: 0.5;
+  color: var(--color-light);
 }
