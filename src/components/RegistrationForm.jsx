@@ -1,5 +1,6 @@
 import { useState } from "react";
 import FormInput from "./FormInput";
+import axios from "axios";
 
 export default function RegistrationForm(props) {
     const [username, setUsername] = useState('');
@@ -7,9 +8,23 @@ export default function RegistrationForm(props) {
     const [passwordConfirm, setPasswordConfirm] = useState('');
     const [email, setEmail] = useState('');
 
-    const handelSubmit = (e) => {
+    const handelSubmit = async (e) => {
         e.preventDefault();
+        const data = {
+            username: username,
+            password: password,
+            email: email,
+        }
+        try {
+            const response = await axios.post('http://localhost:5000/api/users/create', data);
+            console.log(response.data);
+        }catch(err) {
+            console.log(err);
+        }
         //TD: add check in DB
+        //TD add validation about password and confirm password
+        //clear the form after sending request
+        //give the user message if the function was good or not
     }
 
     return (

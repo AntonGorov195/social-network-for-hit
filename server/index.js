@@ -20,27 +20,14 @@ mongoose
     .catch((err) => console.error("MongoDB error:", err));
 
 // Example schema
-const PostsSchema = new mongoose.Schema({
-    PostId : String,
-    PostAuthor : String,
-    PostContent : String,
-    PostDate : Date,
-    PostGroup: String,
-    PostLable : String,
-});
-const Post = mongoose.model("posts_collection", PostsSchema,"posts_collection");
+
 
 // API routes
-app.get("/api/posts", async (req, res) => {
-    console.log("try to get posts");
-    const user = req.query.userid;
-    console.log(typeof (user)+" " + user);
-    console.log("Using database:", Post.db.name);
-    console.log("Using collection:", Post.collection.name);
-    const posts = await Post.find({PostAuthor: "123"});
-    console.log(posts);
-    res.json(posts);
-});
+const postRouter = require('./routes/postRoute');
+const userRouter = require('./routes/userRoute');
+
+app.use('/api/posts',postRouter);
+app.use('/api/users',userRouter);
 
 app.post("/api/items", async (req, res) => {
     console.log("!");
