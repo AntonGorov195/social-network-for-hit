@@ -48,8 +48,9 @@
     --color-active: #f7d371;
     --color-light-red: #fabce2;
 }
-*{
-  box-sizing: border-box;
+* {
+    margin: 0;
+    box-sizing: border-box;
 }
 body {
     background-color: var(--color-light);
@@ -61,7 +62,11 @@ body {
     border-radius: 3rem;
 } */
 input::placeholder {
-  font-weight: bold;
-  opacity: 0.5;
-  color: var(--color-light);
+    font-weight: bold;
+    opacity: 0.5;
+    color: var(--color-light);
+}
+.panel {
+    color: var(--color-light);
+    background-color: var(--color-dark);
 }
