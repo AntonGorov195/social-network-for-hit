@@ -23,7 +23,7 @@ export default function Login(props) {
                         <FormInput type="password" value={password} setValue={setPassword} inputName={"Password"} />
                         <button style={{ width: "100%" }} onClick={handleSignIn} >Sign in </button>
                     </form>
-                    <button onClick={() => setRegistrationMode(false)} >Sign up</button>
+                    <button onClick={() => setRegistrationMode(true)} >Sign up</button>
                 </div>}
         </div>
     )
