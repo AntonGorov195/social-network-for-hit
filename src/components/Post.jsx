@@ -7,7 +7,7 @@ export default function Post({ username, content, groupName, date }) {
         backgroundColor: "var(--color-dark)",
         color: "var(--color-light)",
         padding: "20px",
-        width: "66%",
+        width: "100%",
         borderRadius: "15px",
     }}>
         <div style={{
