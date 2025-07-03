@@ -15,7 +15,6 @@ export default function HomeScreen() {
     ) : (
         <Login onLogin={() => {
                 setIsRegister(true);
-                console.log("HIGGsdfafh");
         }} />
     );
 }

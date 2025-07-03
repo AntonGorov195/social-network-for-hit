@@ -5,8 +5,21 @@ import axios from "axios";
 export default function LoginForm (props) {
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
-    const handleSignIn = (e) => {
+    const handleSignIn = async (e) => {
         e.preventDefault()
+        const data = {
+            username: username,
+            password: password
+        }
+        try {
+            const response = await axios.post("http://localhost:5000/api/users/login", data)
+            if (response.status === 200) {
+                console.log("Successfully logged in")
+                props.onLogin() // call the function to change the is register to true - so we will see the posts
+            }
+        }catch (error) {
+            console.log(error)
+        }
         //TD: check in DB
     }
     return (
@@ -20,8 +33,8 @@ export default function LoginForm (props) {
                     color: "white",
                     borderRadius: "40px"
                 }}>
-                    <FormInput type="text" value={username} setValue={setUsername} inputName={"Username"}/>
-                    <FormInput type="password" value={password} setValue={setPassword} inputName={"Password"}/>
+                    <FormInput type="text" value={username} setValue={setUsername} inputName={"Username"} required={true}/>
+                    <FormInput type="password" value={password} setValue={setPassword} inputName={"Password"} required={true}/>
                     <button style={{width: "100%"}} onClick={handleSignIn}>Sign in</button>
                 </form>
                 <button onClick={() => props.setRegistrationMode(true)}>Sign up</button>
