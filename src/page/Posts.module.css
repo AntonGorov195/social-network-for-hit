@@ -3,3 +3,30 @@
     justify-content: center;
     width: 100%;
 }
+.main {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 66%;
+}
+
+.posts-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+/* TODO: error-msg and loading-msg are very similar, should they be refactored */
+.error-msg {
+    background-color: var(--color-dark);
+    font-size: 6rem;
+    text-align: center;
+    color: red;
+    border-radius: 20px;
+}
+.loading-msg {
+    background-color: var(--color-dark);
+    font-size: 6rem;
+    text-align: center;
+    color: var(--color-light);
+    border-radius: 20px;
+}

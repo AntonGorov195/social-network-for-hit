@@ -6,34 +6,31 @@ import AdvanceSearchButton from "../components/AdvanceSearchButton";
 import PostsSearchBar from "../components/PostsSearchBar";
 import styles from "./Posts.module.css"
 
-/**
- * 
- * @typedef {"loading" | "error" | "success"} ResourceState 
- * 
- */
-
 
 export default function Posts(props) {
-    const [posts, setPosts] = useState([]);
     /**
-     * @type {[ResourceState, React.Dispatch<React.SetStateAction<ResourceState>>]}
-     */
-    const [loading, setLoading] = useState("loading");
+     * @typedef {"loading" | "error" | "success"} ResourceState 
+     * @typedef {[ResourceState, React.Dispatch<React.SetStateAction<ResourceState>>]} ResourceUseState
+    */
+
+    const [posts, setPosts] = useState([]);
+    /**  @type {ResourceUseState} */
+    const [searchState, setSearchState] = useState("loading");
     const [searchInput, setSearchInput] = useState("");
     const [advancedSearchOn, setAdvancedSearchOn] = useState(false);
     const [advancedSearchGroup, setAdvancedSearchGroup] = useState("");
 
     const fetchPosts = () => {
-        setLoading("loading");
+        setSearchState("loading");
         axios.get('http://localhost:5000/api/posts', {
             params: {
                 userid: searchInput,
             }
         }).then(response => {
-            setLoading("success");
+            setSearchState("success");
             setPosts(response.data);
         }).catch(error => {
-            setLoading("error");
+            setSearchState("error");
             console.error(error);
         });
     }
@@ -48,21 +45,18 @@ export default function Posts(props) {
 
     return (
         <div className={styles.page}>
-            <main style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "10px", width: "66%" }}>
-                <div style={{ display: "flex", width: "100%", flexDirection: "column", lignItems: "center", gap: "10px" }} onSubmit={(e) => {
-                    e.preventDefault()
-                }}>
-                    <div style={{ display: "flex", gap: "10px" }}>
-                        <PostsSearchBar onInput={(e) => setSearchInput(e.currentTarget.value)} />
-                        <SearchIcon />
-                        <AdvanceSearchButton onClick={(e) => setAdvancedSearchOn(!advancedSearchOn)} />
-                    </div>
-                    <div style={{ display: "flex", justifyContent: "space-between" }}>
-                        <div>Results: {posts.length}</div>
-                        <a href="/404">Write Post</a>
-                        <a href="/search">Advance Search</a>
-                    </div>
-                    <div>
+            <main className={styles.main}>
+                <div style={{ display: "flex", gap: "10px" }}>
+                    <PostsSearchBar onInput={(e) => setSearchInput(e.currentTarget.value)} />
+                    {/* <SearchIcon /> */}
+                    {/* <AdvanceSearchButton onClick={(e) => setAdvancedSearchOn(!advancedSearchOn)} /> */}
+                </div>
+                <div style={{ display: "flex", justifyContent: "space-between" }}>
+                    <div>Results: {posts.length}</div>
+                    <a href="/404">Write Post</a>
+                    <a href="/search">Advance Search</a>
+                </div>
+                {/* <div>
                         {
                             advancedSearchOn &&
                             <div style={{
@@ -95,30 +89,32 @@ export default function Posts(props) {
                                 </div>
                             </div>
                         }
-                    </div>
+                    </div> */}
+                <div className={styles["posts-list"]}>
+                    {
+                        (() => {
+                            switch (searchState) {
+                                case "loading":
+                                    return (<div className={styles["loading-msg"]}>Loading</div>)
+                                case "success":
+                                    if (posts.length == 0) {
+                                        return (<div >
+                                            No posts found
+                                        </div>)
+                                    }
+                                    // TODO: Use ul tag for the posts list 
+                                    return (
+                                        posts.map((p) => {
+                                            return <Post key={p.PostId} username={p.PostAuthor} content={p.PostContent} groupName={p.PostGroup} date={p.PostDate} />
+                                        })
+                                    )
+                                case "error":
+                                    return (<div className={styles["error-msg"]}>Error</div>)
+                            }
+                            return (<div>Invalid State</div>)
+                        })()
+                    }
                 </div>
-                {
-                    (() => {
-                        switch (loading) {
-                            case "loading":
-                                return (<div style={{ fontSize: "6rem" }}>Loading</div>)
-                            case "success":
-                                if (posts.length == 0) {
-                                    return (<div>
-                                        No posts found
-                                    </div>)
-                                }
-                                return (
-                                    posts.map((p) => {
-                                        return <Post key={p.PostId} username={p.PostAuthor} content={p.PostContent} groupName={p.PostGroup} date={p.PostDate} />
-                                    })
-                                )
-                            case "error":
-                                return (<div style={{ fontSize: "6rem", color: "red" }}>Error</div>)
-                        }
-                        return (<div>Invalid State</div>)
-                    })()
-                }
             </main>
         </div>
     )
