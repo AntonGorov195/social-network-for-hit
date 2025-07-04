@@ -1,7 +1,7 @@
 export default function PostsSearchBar({ onInput }) {
     return (
         <input style={{
-            padding: "10px",
+            padding: "20px",
             backgroundColor: "var(--color-dark)",
             color: "var(--color-light)",
             borderWidth: "10px",
