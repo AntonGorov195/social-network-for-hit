@@ -25,9 +25,11 @@ mongoose
 // API routes
 const postRouter = require('./routes/postRoute');
 const userRouter = require('./routes/userRoute');
+const groupRouter = require('./routes/groupRoute');
 
 app.use('/api/posts',postRouter);
 app.use('/api/users',userRouter);
+app.use('/api/groups',groupRouter)
 
 app.post("/api/items", async (req, res) => {
     console.log("!");
