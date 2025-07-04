@@ -20,8 +20,10 @@ export default function Search() {
   return (
     <div>
       <h1>Items</h1>
-      <input value={newItem} onChange={e => setNewItem(e.target.value)} />
-      <button onClick={addItem}>Add Item</button>
+      <form>
+        <input value={newItem} onChange={e => setNewItem(e.target.value)} />
+        <button onClick={addItem} onSubmit={(e) => e.preventDefault()}>Search</button>
+      </form>
       <ul>
         {items.map((item, i) => <li key={i}>{item.name}</li>)}
       </ul>
