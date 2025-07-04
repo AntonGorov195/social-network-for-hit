@@ -17,12 +17,12 @@ export default function PostWrite() {
         const data = {
             // PostId: "", auto generated
             PostAuthor: "happy test user", // TODO: use cookie
-            PostContent: "",
+            PostContent: postBody,
             // I'm not sure how this will work. Does user have one group?
             // Does the user get to select the group?
             // Does the have do be in the group?
             PostGroup: "",
-            PostLable: "",
+            PostLable: postlabel,
             // PostDate: Date, this is optional, will use Date.now() by default.
         }
         setPostState("sending")

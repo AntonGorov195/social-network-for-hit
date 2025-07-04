@@ -24,7 +24,7 @@ export default function Posts(props) {
         setSearchState("loading");
         axios.get('http://localhost:5000/api/posts', {
             params: {
-                userid: searchInput,
+                content: searchInput,
             }
         }).then(response => {
             setSearchState("success");
