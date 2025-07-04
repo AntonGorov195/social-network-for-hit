@@ -13,9 +13,9 @@ export default function Posts(props) {
      * @typedef {[ResourceState, React.Dispatch<React.SetStateAction<ResourceState>>]} ResourceUseState
     */
 
-    const [posts, setPosts] = useState([]);
     /**  @type {ResourceUseState} */
     const [searchState, setSearchState] = useState("loading");
+    const [posts, setPosts] = useState([]);
     const [searchInput, setSearchInput] = useState("");
     const [advancedSearchOn, setAdvancedSearchOn] = useState(false);
     const [advancedSearchGroup, setAdvancedSearchGroup] = useState("");

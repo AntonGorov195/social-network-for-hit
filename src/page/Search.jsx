@@ -22,9 +22,9 @@ export default function Search() {
     setSearchState("loading");
     axios.get('http://localhost:5000/api/posts', {
       params: {
-        content: content,
-        groupName: groupName,
-        userSearch: userSearch,
+        content: content == "" ? undefined : content,
+        groupName: groupName == "" ? undefined : groupName,
+        userSearch: userSearch == "" ? undefined : userSearch,
       }
     }).then(response => {
       setSearchState("success");
