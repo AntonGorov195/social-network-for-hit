@@ -42,7 +42,7 @@ router.post('/login', async (req, res) => {
         }
         else {
             const token = jwt.sign({username:username},process.env.JWT_SECRET,{expiresIn:'7d'});
-            res.cookie('token',token,{maxAge:604800000});
+            res.json({'token':token});
             res.status(200).send("logged in successfully");
         }
     }

@@ -15,6 +15,8 @@ export default function LoginForm (props) {
             const response = await axios.post("http://localhost:5000/api/users/login", data)
             if (response.status === 200) {
                 console.log("Successfully logged in")
+                const token = response.data.token;
+                localStorage.setItem("token", token);
                 props.onLogin() // call the function to change the is register to true - so we will see the posts
             }
         }catch (error) {
