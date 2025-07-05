@@ -1,10 +1,15 @@
-const mongoose = require('mongoose')
-const PostsSchema = new mongoose.Schema({
-    PostId : String,
-    PostAuthor : String,
-    PostContent : String,
-    PostDate : Date,
-    PostGroup: String,
-    PostLable : String,
+const mongoose = require("mongoose");
+const { Schema } = mongoose;
+
+const PostsSchema = new Schema({
+    body: { type: String, required: true },
+    date: { type: String, default: Date.now },
+    label: { type: String, required: false },
+    groupId: { type: Schema.Types.ObjectId, ref: "group", required: false },
+    userId: { type: Schema.Types.ObjectId, required: false, ref: "User" },
 });
-module.exports = mongoose.model("posts_collection", PostsSchema,"posts_collection");
+module.exports = mongoose.model(
+    "posts",
+    PostsSchema,
+    "posts"
+);

@@ -14,25 +14,28 @@ export default function PostWrite() {
 
     const submit = (e) => {
         e.preventDefault()
+        const token = localStorage.getItem('token');
         const data = {
             // PostId: "", auto generated
             PostAuthor: "happy test user", // TODO: use cookie
-            PostContent: postBody,
+            body: postBody,
             // I'm not sure how this will work. Does user have one group?
             // Does the user get to select the group?
             // Does the have do be in the group?
             PostGroup: "",
-            PostLable: postlabel,
+            label: postlabel,
             // PostDate: Date, this is optional, will use Date.now() by default.
         }
         setPostState("sending")
-        axios.post("http://localhost:5000/api/post/create", data).then((res) => {
+        axios.post("http://localhost:5000/api/posts/create", data, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            }
+        }).then((res) => {
             setPostState("post-success-wait")
-            console.log("aaa")
         }).catch(
             (err) => {
                 setPostState("error-wait")
-                console.log("bbb")
             }
         )
     }
@@ -55,10 +58,10 @@ export default function PostWrite() {
             })()
         }
         <form onSubmit={submit} style={{ display: "flex", flexDirection: "column" }}>
-            <textarea />
+            <textarea onInput={(e) => setPostBody(e.target.value)}/>
             <div>
                 <label>Post Label</label>
-                <input />
+                <input onInput={(e) => setPostLabel(e.target.value)}/>
             </div>
             <button> Make Post </button>
         </form>

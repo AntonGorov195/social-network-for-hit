@@ -1,46 +1,81 @@
 const express = require("express");
 const router = express.Router();
 const Post = require("../models/PostsSchema");
+const authMiddleware = require("../middlewares/authMiddleware");
 
 router.get("/", async (req, res) => {
     console.log(req.originalUrl);
-    const content = req.query.content;
+    const body = req.query.body;
     const groupName = req.query.groupName;
     const userSearch = req.query.userSearch;
-    const find = {};
-    if (req.query.content) {
-        find.PostContent = { $regex: content, $options: "i" };
+    const find = [];
+    if (req.query.body) {
+        find.push({ $match: { body: { $regex: body, $options: "i" } } });
     }
     if (req.query.groupName) {
-        find.PostGroup = { $regex: groupName, $options: "i" };
+        find.push({
+            $match: { "group.name": { $regex: groupName, $options: "i" } },
+        });
     }
     if (req.query.userSearch) {
-        find.PostAuthor = { $regex: userSearch, $options: "i" };
+        find.push({
+            $match: { "user.username": { $regex: userSearch, $options: "i" } },
+        });
     }
-    const posts = await Post.find(find);
+    const posts = await Post.aggregate([
+        {
+            $lookup: {
+                from: "users",
+                localField: "userId",
+                foreignField: "_id",
+                as: "user",
+            },
+        },
+        {
+            $lookup: {
+                from: "groups",
+                localField: "groupId",
+                foreignField: "_id",
+                as: "group",
+            },
+        },
+        {
+            $unwind: "$user", // deconstruct the array to get a single object
+        },
+        {
+            $unwind: "$group", // deconstruct the array to get a single object
+        },
+        // {
+        //     $match: {
+        //         "body": { $regex: "", $options: "i" }, // case-insensitive match
+        //     },
+        // },
+        ...find,
+        {
+            $project: {
+                _id: 0,
+                body: "$body",
+                date: "$date",
+                label: "$label",
+                groupName: "$group.name",
+                username: "$user.username",
+            },
+        },
+    ]);
+    console.log(posts);
     res.json(posts);
 });
-router.get("/create", async (req, res) => {
+router.post("/create", authMiddleware,async (req, res) => {
     console.log(req.originalUrl);
-    const PostAuthor = req.query.PostAuthor;
-    const PostGroup = req.query.PostGroup;
-    const PostContent = req.query.PostContent;
-    // const find = {};
-    // if (req.query.content) {
-    //     find.PostContent = { $regex: content, $options: "i" };
-    // }
-    // if (req.query.groupName) {
-    //     find.PostGroup = { $regex: groupName, $options: "i" };
-    // }
-    // if (req.query.userSearch) {
-    //     find.PostAuthor = { $regex: userSearch, $options: "i" };
-    // }
+    console.log(req.user);
+    const label = req.query.label;
+    const body = req.query.body;
     const posts = await new Post({
-        PostAuthor: PostAuthor,
-        PostContent: PostContent,
-        PostGroup: PostGroup,
+        body: body,
+        label: label,
     });
-    res.json(posts);
+    await posts.save()
+    res.json({});
 });
 
 module.exports = router;

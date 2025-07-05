@@ -17,8 +17,6 @@ export default function Posts(props) {
     const [searchState, setSearchState] = useState("loading");
     const [posts, setPosts] = useState([]);
     const [searchInput, setSearchInput] = useState("");
-    const [advancedSearchOn, setAdvancedSearchOn] = useState(false);
-    const [advancedSearchGroup, setAdvancedSearchGroup] = useState("");
 
     const fetchPosts = () => {
         setSearchState("loading");
@@ -41,7 +39,7 @@ export default function Posts(props) {
 
     useEffect(() => {
         fetchPosts();
-    }, [searchInput, advancedSearchGroup])
+    }, [searchInput])
 
     return (
         <div className={styles.page}>
@@ -51,45 +49,11 @@ export default function Posts(props) {
                     {/* <SearchIcon /> */}
                     {/* <AdvanceSearchButton onClick={(e) => setAdvancedSearchOn(!advancedSearchOn)} /> */}
                 </div>
-                <div style={{ display: "flex", justifyContent: "space-between" }}>
-                    <div>Results: {posts.length}</div>
-                    <a href="/404">Write Post</a>
-                    <a href="/search">Advance Search</a>
+                <div style={{ display: "flex", gap: "10px", textAlign: "center" }}>
+                    <div style={{ flex: "1", backgroundColor: "var(--color-dark)", color: "var(--color-light)", padding: "15px", borderRadius: "10px" }}>Results: {posts.length}</div>
+                    <a style={{ flex: "1", backgroundColor: "var(--color-dark)", color: "var(--color-light)", padding: "15px", borderRadius: "10px" }} href="/post-write">Write Post</a>
+                    <a style={{ flex: "1", backgroundColor: "var(--color-dark)", color: "var(--color-light)", padding: "15px", borderRadius: "10px" }} href="/search">Advance Search</a>
                 </div>
-                {/* <div>
-                        {
-                            advancedSearchOn &&
-                            <div style={{
-                                backgroundColor: "var(--color-dark)",
-                                color: "var(--color-light)",
-                                width: "100%",
-                                fontSize: "1.5rem",
-                                padding: "10px",
-                                borderRadius: "20px",
-                            }}>
-                                <div style={{
-                                    display: "flex",
-                                    gap: "3px",
-                                }}>
-                                    <div> Group search</div>
-                                    <input style={{
-                                        color: "var(--color-light)",
-                                        backgroundColor: "var(--color-dark)",
-                                        fontSize: "1.5rem",
-                                        flex: "1",
-                                    }} onInput={(e) => {
-                                        setAdvancedSearchGroup(e.currentTarget.value)
-                                    }} />
-                                </div>
-                                <div>
-                                    User Search
-                                </div>
-                                <div>
-                                    Another Filter
-                                </div>
-                            </div>
-                        }
-                    </div> */}
                 <div className={styles["posts-list"]}>
                     {
                         (() => {
@@ -105,7 +69,7 @@ export default function Posts(props) {
                                     // TODO: Use ul tag for the posts list 
                                     return (
                                         posts.map((p) => {
-                                            return <Post key={p.PostId} username={p.PostAuthor} content={p.PostContent} groupName={p.PostGroup} date={p.PostDate} />
+                                            return <Post key={p._id} username={p.username} content={p.body} groupName={p.groupName} date={p.date} />
                                         })
                                     )
                                 case "error":
