@@ -35,10 +35,6 @@ export default function Posts(props) {
 
     useEffect(() => {
         fetchPosts();
-    }, [])
-
-    useEffect(() => {
-        fetchPosts();
     }, [searchInput])
 
     return (

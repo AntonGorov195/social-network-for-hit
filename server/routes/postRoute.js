@@ -42,9 +42,9 @@ router.get("/", async (req, res) => {
         {
             $unwind: "$user", // deconstruct the array to get a single object
         },
-        {
-            $unwind: "$group", // deconstruct the array to get a single object
-        },
+        // {
+        //     $unwind: "$group", // deconstruct the array to get a single object
+        // },
         // {
         //     $match: {
         //         "body": { $regex: "", $options: "i" }, // case-insensitive match
@@ -62,17 +62,18 @@ router.get("/", async (req, res) => {
             },
         },
     ]);
-    console.log(posts);
     res.json(posts);
 });
-router.post("/create", authMiddleware,async (req, res) => {
+router.post("/create", authMiddleware, async (req, res) => {
     console.log(req.originalUrl);
     console.log(req.user);
-    const label = req.query.label;
-    const body = req.query.body;
+    console.log(req.body.params);
+    const label = req.body.params.label;
+    const body = req.body.params.body;
     const posts = await new Post({
         body: body,
         label: label,
+        userId: req.user.userId,
     });
     await posts.save()
     res.json({});
