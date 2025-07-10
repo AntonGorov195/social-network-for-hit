@@ -139,4 +139,16 @@ try {
     res.status(500).json({"error": error});
 }
 })
+router.get('/groupsOfUser/:userId', async (req, res) => {
+    console.log("trying to get a group by userId");
+    const userId = req.params.userId;
+    try {
+        const group = await Group.find({members:userId});
+        res.status(200).json({"group":group});
+        console.log("Groups get successfully");
+    }catch (error) {
+        console.log(error);
+        res.status(500).json({"error": error});
+    }
+})
 module.exports = router;

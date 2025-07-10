@@ -85,5 +85,16 @@ router.post("/create", authMiddleware, async (req, res) => {
     // TODO:
     res.json({});
 });
+router.get('/getAllPostsOfGroup/:groupId', async (req, res) => {
+    console.log("trying to get all the posts of a group");
+    const groupId = req.params.groupId;
+try {
+    const posts = await Post.find({groupId});
+    res.status(200).json(posts);
+}catch(err){
+    console.log(err);
+    res.status(500).json({message:"Something went wrong",error:err});
+}
+})
 
 module.exports = router;
