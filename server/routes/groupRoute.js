@@ -88,6 +88,9 @@ router.put("/updateGroup", async (req, res) => {
 router.delete("/deleteGroup", async (req, res) => {
     console.log("trying to delete a group");
     const name = req.body.name;
+    if (!name) {
+        res.status(400).send('missing required parameters');
+    }
     try {
         const deletedGroup = await Group.findOneAndDelete({name:name});
         if (!deletedGroup) {
@@ -101,5 +104,39 @@ router.delete("/deleteGroup", async (req, res) => {
         console.log(err);
     }
 })
-
+router.get("/getGroup", async (req, res) => {
+    console.log("trying to get a group");
+    const name = req.body.name;
+    if (!name) {
+        res.status(400).send('missing required parameters');
+    }
+    else {
+        try {
+            let query = {name: name};
+            const group = await Group.find(query);
+            res.status(200).json(group);
+            console.log("Group get successfully");
+        }catch (error) {
+            console.log(error);
+            res.status(500).json({"error": error});
+        }
+    }
+})
+router.get("/getGroupsByParameters",async (req, res) => {
+    console.log("trying to get a group by parameters");
+const {name,createdAt,members,description,managerUser} = req.query;
+try {
+    let query = {}
+    if (name) query.name = name;
+    if (createdAt) query.createdAt = createdAt;
+    if (members) query.members = members;
+    if (description) query.description = description;
+    if (managerUser) query.managerUser = managerUser;
+    const groups = await Group.find(query);
+    res.status(200).json({"groups":groups});
+}catch (error) {
+    console.log(error);
+    res.status(500).json({"error": error});
+}
+})
 module.exports = router;

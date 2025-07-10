@@ -32,7 +32,6 @@ router.post('/create', async (req, res) => {
         res.status(500).json({error: 'Server error'});
     }
 });
-
 router.post('/login', async (req, res) => {
     console.log("request to login")
     const username = req.body.username;
@@ -50,8 +49,6 @@ router.post('/login', async (req, res) => {
         }
     }
 })
-
-
 router.get('/getAllUsers', async (req, res) => {
     console.log('trying to get all users');
     try {
@@ -69,9 +66,9 @@ router.get('/getAllUsers', async (req, res) => {
         });
     }
 });
-
-router.get('getUsersByParameters', async (req, res) => {
-const {username, email, createdAt} = req.query;
+router.get('/getUsersByParameters', async (req, res) => {
+console.log('trying to get users by parameters');
+    const {username, email, createdAt} = req.query;
 try {
     let query = {};
     if (username) query.username = username;
@@ -86,5 +83,51 @@ try {
         error: err
     });
 }
+})
+router.put('/updateUser', async (req, res) => {
+    console.log("trying to update user");
+    const username = req.body.username;
+    if (!username) {
+        res.status(400).send('missing required parameters');
+    }else {
+        try {
+            const updatedUser = await User.findOneAndUpdate(
+                {username: username},
+                req.body,
+                {new: true}
+            );
+            if (!updatedUser) {
+                res.status(404).send('username not found');
+            }else {
+                res.status(200).json({message: 'successfully updated user',data: updatedUser});
+                console.log("user updated successfully");
+            }
+        }catch(err) {
+            console.log(err);
+            res.status(500).json({
+                message: "something went wrong",
+                error: err
+            })
+        }
+    }
+})
+router.delete('/deleteUser', async (req, res) => {
+    console.log('trying to delete user');
+    const username = req.body.username;
+    if (!username) {
+        res.status(400).send('missing required parameters');
+    }try {
+        const deletedUser = await User.findOneAndDelete({username: username});
+        if (!deletedUser) {
+            res.status(404).send('username not found');
+        }else {
+            res.status(200).json({message: 'successfully deleted user',data: deletedUser});
+            console.log("user deleted successfully");
+        }
+    }catch(err) {
+        console.log(err);
+        res.status(500).json({message: "something went wrong",error: err});
+    }
+
 })
 module.exports = router;
