@@ -9,6 +9,7 @@ import Posts from "./page/Posts";
 import Login from "./page/Login";
 import Search from "./page/Search";
 import PostWrite from "./page/PostWrite";
+import PageNotFound from "./page/PageNotFound";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -21,6 +22,7 @@ root.render(
                 <Route path="login" element={<Login />} />
                 <Route path="search" element={<Search />} />
                 <Route path="post-write" element={<PostWrite />} />
+                <Route path="/*" element={<PageNotFound />} />
             </Routes>
         </BrowserRouter>
     </React.StrictMode>
