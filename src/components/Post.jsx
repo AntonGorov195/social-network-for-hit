@@ -1,5 +1,5 @@
-export default function Post({ username, content, groupName, date }) {
-    return (<div className="post" style={{
+export default function Post({ key, username, postId, content, groupName, canEdit, date }) {
+    return (<li className="post" key={key} style={{
         flexDirection: "column",
         display: "flex",
         alignItems: "center",
@@ -18,7 +18,7 @@ export default function Post({ username, content, groupName, date }) {
             padding: "17px",
             borderRadius: "30px",
             borderWidth: "1px",
-            fontFamily:"cursive"
+            fontFamily: "cursive"
         }}>
             {content}
         </div>
@@ -33,7 +33,8 @@ export default function Post({ username, content, groupName, date }) {
             fontSize: "xx-large"
         }}>
             <div>User: {username}</div>
+            {canEdit && (<a href={`/edit-post?postId=${postId}`}>Edit: {username}</a>)}
             <div>Group: {groupName}</div>
         </div>
-    </div>)
+    </li>)
 }

@@ -10,6 +10,7 @@ import Login from "./page/Login";
 import Search from "./page/Search";
 import PostWrite from "./page/PostWrite";
 import PageNotFound from "./page/PageNotFound";
+import EditPost from "./page/EditPost";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -19,6 +20,7 @@ root.render(
             <Routes>
                 <Route index element={<HomeScreen />} />
                 <Route path="posts" element={<Posts />} />
+                <Route path="edit-post" element={<EditPost />} />
                 <Route path="login" element={<Login />} />
                 <Route path="search" element={<Search />} />
                 <Route path="post-write" element={<PostWrite />} />

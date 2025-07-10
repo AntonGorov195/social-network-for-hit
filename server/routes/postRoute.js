@@ -3,8 +3,19 @@ const router = express.Router();
 const Post = require("../models/PostsSchema");
 const authMiddleware = require("../middlewares/authMiddleware");
 
-router.get("/", async (req, res) => {
-    console.log(req.originalUrl);
+router.get("/post", authMiddleware, async (req, res) => {
+    const post = await Post.findById(req.query.postId);
+    res.json(post);
+});
+router.put("/update", authMiddleware, async (req, res) => {
+    const update = await Post.updateOne(
+        { _id:  req.body.postId },
+        { $set: { body: req.body.body } }
+    );
+    console.log(update);
+    res.json({});
+});
+router.get("/", authMiddleware, async (req, res) => {
     const body = req.query.body;
     const groupName = req.query.groupName;
     const userSearch = req.query.userSearch;
@@ -42,32 +53,27 @@ router.get("/", async (req, res) => {
         {
             $unwind: "$user", // deconstruct the array to get a single object
         },
-        // {
-        //     $unwind: "$group", // deconstruct the array to get a single object
-        // },
-        // {
-        //     $match: {
-        //         "body": { $regex: "", $options: "i" }, // case-insensitive match
-        //     },
-        // },
         ...find,
         {
             $project: {
-                _id: 0,
+                _id: "$_id",
                 body: "$body",
                 date: "$date",
                 label: "$label",
                 groupName: "$group.name",
                 username: "$user.username",
+                userId: "$user._id",
             },
         },
     ]);
-    res.json(posts);
+
+    const message = {
+        posts: posts,
+        userId: req.user.userId,
+    };
+    res.json(message);
 });
 router.post("/create", authMiddleware, async (req, res) => {
-    console.log(req.originalUrl);
-    console.log(req.user);
-    console.log(req.body.params);
     const label = req.body.params.label;
     const body = req.body.params.body;
     const posts = await new Post({
@@ -75,7 +81,8 @@ router.post("/create", authMiddleware, async (req, res) => {
         label: label,
         userId: req.user.userId,
     });
-    await posts.save()
+    await posts.save();
+    // TODO:
     res.json({});
 });
 

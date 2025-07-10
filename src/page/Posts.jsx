@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Post from "../components/Post";
-import SearchIcon from "../components/SearchIcon";
-import AdvanceSearchButton from "../components/AdvanceSearchButton";
 import PostsSearchBar from "../components/PostsSearchBar";
 import styles from "./Posts.module.css"
 
@@ -16,17 +14,24 @@ export default function Posts(props) {
     /**  @type {ResourceUseState} */
     const [searchState, setSearchState] = useState("loading");
     const [posts, setPosts] = useState([]);
+    const [userId, setUserId] = useState("");
     const [searchInput, setSearchInput] = useState("");
+    const [authToken, setAuthToken] = useState(localStorage.getItem("token"));
 
     const fetchPosts = () => {
         setSearchState("loading");
         axios.get('http://localhost:5000/api/posts', {
             params: {
-                content: searchInput,
+                token: authToken,
+                body: searchInput,
+            },
+            headers: {
+                Authorization: `Bearer ${authToken}`,
             }
         }).then(response => {
             setSearchState("success");
-            setPosts(response.data);
+            setUserId(response.data.userId);
+            setPosts(response.data.posts);
         }).catch(error => {
             setSearchState("error");
             console.error(error);
@@ -50,7 +55,7 @@ export default function Posts(props) {
                     <a style={{ flex: "1", backgroundColor: "var(--color-dark)", color: "var(--color-light)", padding: "15px", borderRadius: "10px" }} href="/post-write">Write Post</a>
                     <a style={{ flex: "1", backgroundColor: "var(--color-dark)", color: "var(--color-light)", padding: "15px", borderRadius: "10px" }} href="/search">Advance Search</a>
                 </div>
-                <div className={styles["posts-list"]}>
+                <ul className={styles["posts-list"]}>
                     {
                         (() => {
                             switch (searchState) {
@@ -65,7 +70,7 @@ export default function Posts(props) {
                                     // TODO: Use ul tag for the posts list 
                                     return (
                                         posts.map((p) => {
-                                            return <Post key={p._id} username={p.username} content={p.body} groupName={p.groupName} date={p.date} />
+                                            return <Post postId={p._id} key={p._id} canEdit={p.userId === userId} username={p.username} content={p.body} groupName={p.groupName} date={p.date} />
                                         })
                                     )
                                 case "error":
@@ -74,7 +79,7 @@ export default function Posts(props) {
                             return (<div>Invalid State</div>)
                         })()
                     }
-                </div>
+                </ul>
             </main>
         </div>
     )
