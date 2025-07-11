@@ -52,6 +52,24 @@ export default function EditPost() {
         }}>
             Form
             <button>Update</button>
+            <button onClick={(e) => {
+                e.preventDefault();
+                // window.history.back();
+                axios.delete("http://localhost:5000/api/posts/delete",
+                    {
+                        params: {
+                            postId: postId
+                        },
+                        headers: {
+                            Authorization: `Bearer ${authToken}`,
+                        }
+                    }
+                ).then((res) => {
+                    console.log(res.status);
+                }).catch((err) => {
+                    console.error(err);
+                })
+            }}> Delete </button>
         </form>)
     }
     return <div>

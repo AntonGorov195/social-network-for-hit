@@ -8,11 +8,19 @@ router.get("/post", authMiddleware, async (req, res) => {
     res.json(post);
 });
 router.put("/update", authMiddleware, async (req, res) => {
-    const update = await Post.updateOne(
-        { _id:  req.body.postId },
+    // TODO: verify the token and userId match
+    await Post.updateOne(
+        { _id: req.body.postId },
         { $set: { body: req.body.body } }
     );
-    console.log(update);
+    res.json({});
+});
+router.delete("/delete", authMiddleware, async (req, res) => {
+    await Post.deleteOne({
+       _id: req.query.postId,
+    }).catch(() => {
+        console.error("Couldn't delete post");
+    });
     res.json({});
 });
 router.get("/", authMiddleware, async (req, res) => {
@@ -85,16 +93,16 @@ router.post("/create", authMiddleware, async (req, res) => {
     // TODO:
     res.json({});
 });
-router.get('/getAllPostsOfGroup/:groupId', async (req, res) => {
+router.get("/getAllPostsOfGroup/:groupId", async (req, res) => {
     console.log("trying to get all the posts of a group");
     const groupId = req.params.groupId;
-try {
-    const posts = await Post.find({groupId});
-    res.status(200).json(posts);
-}catch(err){
-    console.log(err);
-    res.status(500).json({message:"Something went wrong",error:err});
-}
-})
+    try {
+        const posts = await Post.find({ groupId });
+        res.status(200).json(posts);
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ message: "Something went wrong", error: err });
+    }
+});
 
 module.exports = router;
