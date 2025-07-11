@@ -3,6 +3,7 @@ import axios from 'axios';
 import Post from '../components/Post';
 import PostWrite from './PostWrite';
 import FormInput from '../components/FormInput';
+import './Search.css'
 
 
 
@@ -13,54 +14,90 @@ export default function Search() {
   */
 
   /** @type {ResourceUseState} */
-  const [searchState, setSearchState] = useState("loading");
-  const [posts, setPosts] = useState([])
-  const [content, setContent] = useState("");
-  const [groupName, setGroupName] = useState("");
-  const [userSearch, setUserSearch] = useState("");
+      const [selectedType, setSelectedType] = useState('');
+      const [query, setQuery] = useState({});
+      const [results, setResults] = useState([]);
 
-  const fetchPosts = () => {
-    setSearchState("loading");
-    axios.get('http://localhost:5000/api/posts', {
-      params: {
-        body: content == "" ? undefined : content,
-        groupName: groupName == "" ? undefined : groupName,
-        userSearch: userSearch == "" ? undefined : userSearch,
-      }
-    }).then(response => {
-      setSearchState("success");
-      setPosts(response.data);
-    }).catch(error => {
-      setSearchState("error");
-      console.error(error);
-    });
+const handleChange = (e) => {
+  setQuery({...query, [e.target.name]: e.target.value});
+}
+
+  const handleSearch = async () => {
+  try {
+    const respons = await axios.post(`http://localhost:5000/api/search/${selectedType}`, query);
+    setResults(respons.data);
+  }catch(err) {
+    console.log(err);
+  }
   }
 
   return (
-    <div style={{ padding: "30px" }}>
-      <h1 style={{ textAlign: "center" }}>Advenced Search</h1>
-      <form onSubmit={(e) => e.preventDefault()} style={{ display: "flex", flexDirection: "column" }}>
-        <FormInput type={"text"} value={content} setValue={setContent} inputName={"Content"} placeholder={"search text"} />
-        <select>
+      <div style={{padding: "30px"}}>
+        <h1 style={{textAlign: "center"}}>Advenced Search</h1>
+        <select value={selectedType} onChange={(e) => {
+          setSelectedType(e.target.value);
+          setQuery({});
+          setResults([]);
+        }}>
+          <option value="">Select type</option>
           <option value="post">Post</option>
           <option value="user">User</option>
           <option value="group">Group</option>
         </select>
-        <div>
-          <label>Group Name</label>
-          <input value={groupName} onChange={e => setGroupName(e.target.value)} />
-        </div>
-        <div>
-          <label>Made by User</label>
-          <input value={userSearch} onChange={e => setUserSearch(e.target.value)} />
-        </div>
-        <button onClick={fetchPosts} >Search</button>
-      </form>
-      <ul style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-        {posts.map((p) => {
-          return <Post key={p._id} username={p.username} content={p.body} groupName={p.groupName} date={p.date} />
-        })}
-      </ul>
-    </div>
+
+        {selectedType === "user" && (
+            <div>
+              <input name="username" type="text" placeholder="Username" onChange={handleChange}/>
+              <input name="email" type="email" placeholder="Email" onChange={handleChange}/>
+            </div>
+        )}
+
+        {selectedType === "post" && (
+            <div>
+              <input name="body" type="text" placeholder="Body" onChange={handleChange}/>
+              <input name="label" type="text" placeholder="Label" onChange={handleChange}/>
+            </div>
+        )}
+        {selectedType === "group" && (
+            <div>
+              <input name="name" type="text" placeholder="Group" onChange={handleChange}/>
+              <input name="description" type="text" placeholder="Description" onChange={handleChange}/>
+            </div>
+        )}
+        <button onClick={handleSearch}>search</button>
+          {results.length > 0 && (
+              <div className="results">
+                  <h2>Results:</h2>
+                  <ul>
+                      {results.map((item, index) => (
+                          <li key={index} className="result-card">
+                              {selectedType === "user" && (
+                                  <>
+                                      <strong>Username:</strong> {item.username}<br />
+                                      <strong>Email:</strong> {item.email}
+                                  </>
+                              )}
+
+                              {selectedType === "post" && (
+                                  <>
+                                      <strong>Title:</strong> {item.title}<br />
+                                      <strong>Body:</strong> {item.body}<br />
+                                      <strong>Label:</strong> {item.label}
+                                  </>
+                              )}
+
+                              {selectedType === "group" && (
+                                  <>
+                                      <strong>Name:</strong> {item.name}<br />
+                                      <strong>Description:</strong> {item.description}
+                                  </>
+                              )}
+                          </li>
+                      ))}
+                  </ul>
+              </div>
+          )}
+
+      </div>
   );
 }
