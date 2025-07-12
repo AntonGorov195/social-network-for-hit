@@ -27,11 +27,14 @@ const postRouter = require('./routes/postRoute');
 const userRouter = require('./routes/userRoute');
 const groupRouter = require('./routes/groupRoute');
 const searchRouter = require('./routes/searchRoute');
+const analyticsRouter = require('./routes/analyticsRoute');
 
 app.use('/api/posts',postRouter);
 app.use('/api/users',userRouter);
 app.use('/api/groups',groupRouter)
 app.use('/api/search', searchRouter);
+app.use('/api/analytics',analyticsRouter);
+
 
 app.post("/api/items", async (req, res) => {
     console.log("!");
