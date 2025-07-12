@@ -11,6 +11,7 @@ import Search from "./page/Search";
 import PostWrite from "./page/PostWrite";
 import PageNotFound from "./page/PageNotFound";
 import EditPost from "./page/EditPost";
+import AnalyticsPage from "./page/AnalyticsPage";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -24,6 +25,7 @@ root.render(
                 <Route path="login" element={<Login />} />
                 <Route path="search" element={<Search />} />
                 <Route path="post-write" element={<PostWrite />} />
+                <Route path="analytics" element={<AnalyticsPage/>}/>
                 <Route path="/*" element={<PageNotFound />} />
             </Routes>
         </BrowserRouter>
