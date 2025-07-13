@@ -12,6 +12,10 @@ import PostWrite from "./page/PostWrite";
 import PageNotFound from "./page/PageNotFound";
 import EditPost from "./page/EditPost";
 import AnalyticsPage from "./page/AnalyticsPage";
+import EditGroup from "./page/EditGroup";
+import EditUser from "./page/EditUser";
+import Chat from "./page/Chat";
+import GroupPosts from "./page/GroupPosts";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -21,6 +25,10 @@ root.render(
             <Routes>
                 <Route index element={<HomeScreen />} />
                 <Route path="posts" element={<Posts />} />
+                <Route path="edit-group" element={<EditGroup />} />
+                <Route path="edit-user" element={<EditUser />} />
+                <Route path="chat" element={<Chat />} />
+                <Route path="group-posts" element={<GroupPosts />} />
                 <Route path="edit-post" element={<EditPost />} />
                 <Route path="login" element={<Login />} />
                 <Route path="search" element={<Search />} />
