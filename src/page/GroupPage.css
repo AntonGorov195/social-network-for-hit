@@ -1,0 +1,50 @@
+/* GroupPage.css */
+.group-page {
+    background-color: #add8e6; /* light blue */
+    min-height: 100vh;
+    padding: 2rem;
+}
+
+.group-page h1 {
+    text-align: center;
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 2rem;
+}
+
+.group-card {
+    background-color: white;
+    border: 2px solid #87cefa; /* light blue border */
+    border-radius: 10px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.group-card h3 {
+    margin: 0 0 0.5rem 0;
+}
+
+.group-card p {
+    margin: 0.25rem 0;
+}
+
+.group-card button {
+    margin-top: 0.5rem;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.bg-green-500 {
+    background-color: #38a169;
+}
+
+.bg-red-500 {
+    background-color: #e53e3e;
+}
+
+.text-white {
+    color: white;
+}

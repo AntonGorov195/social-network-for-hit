@@ -2,6 +2,7 @@ import {useEffect,useState} from "react";
 import axios from "axios";
 import Loading from "../components/Loading";
 import { jwtDecode } from 'jwt-decode';
+import './GroupPage.css';
 
 function getUserIdFromToken() {
     const token = localStorage.getItem("token");
@@ -58,24 +59,24 @@ export default function GroupPage(props) {
     return (
         <div>
             {loading ?( <Loading />)
-                :(<div className="grid gap-4"> Groups page
+                :(<div className="group-page">
+                    <h1>All Groups</h1>
+                    <div>
                     {groups.data.map((group) => {
                         const isMember = group.members.includes(userId);
                         return (
-                            <div key={group._id} className="border p-4 rounded">
+                            <div key={group._id} className="group-card">
                                 <h3>{group.name}</h3>
                                 <p>{group.description}</p>
                                 <button
                                     onClick={() => handleToggleMembership(group._id, isMember)}
-                                    className={`px-4 py-2 rounded ${
-                                        isMember ? "bg-red-500" : "bg-green-500"
-                                    } text-white`}
-                                >
+                                    className={`${isMember ? "bg-red-500" : "bg-green-500"} text-white`}>
                                     {isMember ? "Leave" : "Join"}
                                 </button>
                             </div>
                         );
                     })}
+                    </div>
                 </div>) }
                 </div>
     )
