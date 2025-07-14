@@ -16,6 +16,7 @@ import EditGroup from "./page/EditGroup";
 import EditUser from "./page/EditUser";
 import Chat from "./page/Chat";
 import GroupPosts from "./page/GroupPosts";
+import GroupPage from "./page/GroupPage";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -34,6 +35,7 @@ root.render(
                 <Route path="search" element={<Search />} />
                 <Route path="post-write" element={<PostWrite />} />
                 <Route path="analytics" element={<AnalyticsPage/>}/>
+                <Route path="groups" element={<GroupPage/>}/>
                 <Route path="/*" element={<PageNotFound />} />
             </Routes>
         </BrowserRouter>
