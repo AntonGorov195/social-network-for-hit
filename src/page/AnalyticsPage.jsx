@@ -19,7 +19,7 @@ export default function AnalyticsPage (){
 
     return (
         <div>
-           <h2>Posts peer group</h2>
+           <h2>Posts per group</h2>
             <PostsBarChart data={postsData} />
             <h2>Users per group</h2>
             <UsersBarChart data={usersData} />

@@ -14,13 +14,19 @@ const UsersBarChart = ({ data }) => {
 
         svg.selectAll('*').remove();
 
+        let maxValue = 1;
+        if (data && data.length > 0) {
+            const computedMax = d3.max(data, d => d?.userCount ?? 0);
+            maxValue = computedMax > 0 ? computedMax * 1.1 : 1;
+        }
+
         const x = d3.scaleBand()
             .domain(data.map(d => d.name))
             .range([0, width])
             .padding(0.4);
 
         const y = d3.scaleLinear()
-            .domain([0, d3.max(data, d => d.userCount)])
+            .domain([0, maxValue])
             .range([height, 0]);
 
         svg.append('g')
