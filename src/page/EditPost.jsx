@@ -1,6 +1,8 @@
 import axios from "axios";
 import { useEffect, useState } from "react"
 import { useSearchParams } from "react-router-dom";
+import ErrorText from "../components/ErrorText";
+import styles from "./EditPost.module.css"
 
 export default function EditPost() {
     /**
@@ -33,7 +35,11 @@ export default function EditPost() {
     }, [postId])
 
     const FormSection = () => {
-        return (<form onSubmit={(e) => {
+        return (<form style={{
+            width: "50%",
+            padding: "10px",
+            display: "flex",
+        }} onSubmit={(e) => {
             e.preventDefault();
             axios.put("http://localhost:5000/api/posts/update", {
                 body: text,
@@ -50,9 +56,8 @@ export default function EditPost() {
                 console.error(err);
             })
         }}>
-            Form
-            <button>Update</button>
-            <button onClick={(e) => {
+            <button className={styles["form-btn"]}>Update</button>
+            <button className={styles["form-btn"]} onClick={(e) => {
                 e.preventDefault();
                 // window.history.back();
                 axios.delete("http://localhost:5000/api/posts/delete",
@@ -72,7 +77,7 @@ export default function EditPost() {
             }}> Delete </button>
         </form>)
     }
-    return <div>
+    return <div style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: "20px" }}>
         {
             (() => {
                 switch (postState) {
@@ -81,12 +86,17 @@ export default function EditPost() {
                             Loading
                         </div>)
                     case "error":
-                        return (<div>
-                            Error
-                        </div>)
+                        return (<ErrorText />)
                     case "success":
-                        return (<div>
-                            <textarea value={text} onInput={(e) => {
+                        return (<div style={{ width: "66%", }}>
+                            <textarea style={{
+                                backgroundColor: "var(--color-dark)",
+                                color: "var(--color-light)",
+                                padding: "10px",
+                                borderRadius: "20px",
+                                width: "100%",
+                                resize: "vertical",
+                            }} value={text} onInput={(e) => {
                                 setText(e.target.value)
                             }}>
                             </textarea>

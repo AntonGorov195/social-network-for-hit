@@ -80,7 +80,6 @@ export default function Chat() {
                         color: "var(--color-light)",
                         padding: "10px",
                         borderStyle: "solid",
-                        borderColor: "var(--color-light)",
                         borderWidth: "5px",
                         fontSize: "1.3rem",
                         fontFamily: "cursive",
