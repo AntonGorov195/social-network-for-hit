@@ -23,6 +23,7 @@ const groupRouter = require("./routes/groupRoute");
 const searchRouter = require("./routes/searchRoute");
 const chatRouter = require("./routes/chatRoute");
 const analyticsRouter = require('./routes/analyticsRoute');
+const aiRouter = require("./routes/AIRoute");
 
 
 app.use("/api/posts", postRouter);
@@ -31,6 +32,7 @@ app.use("/api/groups", groupRouter);
 app.use("/api/search", searchRouter);
 app.use("/api/chat", chatRouter);
 app.use('/api/analytics',analyticsRouter);
+app.use("/api/AI", aiRouter);
 
 
 app.post("/api/items", async (req, res) => {
