@@ -48,3 +48,11 @@
 .text-white {
     color: white;
 }
+
+.bg-blue-500 {
+    background-color: #384da1;
+}
+.bg-purple-500 {
+    background-color: #a855f7
+;
+}

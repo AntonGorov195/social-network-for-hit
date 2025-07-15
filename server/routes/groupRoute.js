@@ -95,23 +95,28 @@ router.put("/updateGroup", async (req, res) => {
         }
     }
 });
-router.delete("/deleteGroup", async (req, res) => {
+router.delete("/deleteGroup",authMiddleware, async (req, res) => {
     console.log("trying to delete a group");
-    const name = req.body.name;
-    if (!name) {
+    const groupId = req.body.groupId;
+    if (!groupId) {
         res.status(400).send("missing required parameters");
     }
     try {
-        const deletedGroup = await Group.findOneAndDelete({ name: name });
-        if (!deletedGroup) {
+        const group = await Group.findById(groupId);
+        if (!group) {
             res.status(404).send("group not found");
-        } else {
-            res.status(200).json({
+        }
+        const loggedInUserID = req.user.userId;
+        if(group.managerUser.toString() !== loggedInUserID) {
+             return res.status(403).json({message:"only the manager can delete the group"});
+        }
+        const deletedGroup = await Group.findByIdAndDelete(groupId );
+        console.log("Group deleted successfully");
+        return res.status(200).json({
                 message: "Group deleted successfully",
                 data: deletedGroup,
             });
-            console.log("Group deleted successfully");
-        }
+
     } catch (err) {
         res.status(500).json({ message: "Something went wrong", error: err });
         console.log(err);
@@ -232,6 +237,34 @@ router.put("/deleteUserFromGroup",authMiddleware, async (req, res) => {
             console.log(err);
             res.status(500).json({ error: err });
         }
+    }
+})
+router.get("/getUsersInGroup/:groupId", async (req, res) => {
+console.log("trying to get all user in a group");
+const groupId = req.params.groupId;
+try {
+    const group = await Group.findById(groupId)
+        .populate("members","username")
+        .exec();
+    if (!group) {
+        res.status(404).send("group not found");
+    }res.status(200).json({group: group.members});
+}catch(err) {
+    console.log(err);
+    res.status(500).json({ error: err });
+}
+})
+router.get("/getGroupManager/:groupId", async (req, res) => {
+    console.log("trying to get a group manager");
+    const groupId = req.params.groupId;
+    try {
+        const group = await Group.findById(groupId);
+        if (!group) {
+            res.status(404).send("group not found");
+        }res.status(200).json({group: group.managerUser});
+    }catch(err) {
+        console.log(err);
+        res.status(500).json({ error: err });
     }
 })
 module.exports = router;
