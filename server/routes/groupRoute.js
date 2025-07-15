@@ -167,9 +167,9 @@ router.get("/getGroupsByParameters", async (req, res) => {
         res.status(500).json({ error: error });
     }
 });
-router.get("/groupsOfUser/:userId", async (req, res) => {
+router.get("/groupsOfUser",authMiddleware, async (req, res) => {
     console.log("trying to get a group by userId");
-    const userId = req.params.userId;
+    const userId = req.user.userId;
     try {
         const group = await Group.find({ members: userId });
         res.status(200).json({ group: group });

@@ -1,5 +1,7 @@
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import styles from "./PostWrite.module.css"
+import ErrorText from "../components/ErrorText";
 
 export default function PostWrite() {
     /**
@@ -9,12 +11,13 @@ export default function PostWrite() {
 
     /** @type {SearchUseState} */
     const [postState, setPostState] = useState("writing")
+    const [userGroups, setUserGroups] = useState([])
     const [postBody, setPostBody] = useState("")
     const [postlabel, setPostLabel] = useState("")
+    const token = localStorage.getItem('token');
 
     const submit = (e) => {
         e.preventDefault()
-        const token = localStorage.getItem('token');
         const data = {
             params: {
                 // PostId: "", auto generated
@@ -35,37 +38,89 @@ export default function PostWrite() {
             }
         }).then((res) => {
             setPostState("post-success-wait")
-        }).catch(
-            (err) => {
-                setPostState("error-wait")
-            }
-        )
+            setPostBody("");
+            setPostLabel("");
+        }).catch((err) => {
+            console.error(err);
+            setPostState("error-wait")
+        })
     }
 
+    useEffect(() => {
+        axios.get(`http://localhost:5000/api/groups/groupsOfUser`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            }
+        }).then((res) => {
+            setUserGroups(res.data.group);
+        }).catch((err) => {
+            console.error(err);
+            setPostState("error-wait")
+        })
+    }, [])
+
     return (<div>
-        <h1>Write a post</h1>
-        {
-            (() => {
-                switch (postState) {
-                    case "writing":
-                        return <div> Writing </div>
-                    case "sending":
-                        return <div> Sending </div>
-                    case "error-wait":
-                        return <div> error </div>
-                    case "post-success-wait":
-                        return <div> Post Successfully Submitted </div>
-                }
-                return (<div>Invalid State</div>)
-            })()
-        }
-        <form onSubmit={submit} style={{ display: "flex", flexDirection: "column" }}>
-            <textarea onInput={(e) => setPostBody(e.target.value)} />
-            <div>
-                <label>Post Label</label>
-                <input onInput={(e) => setPostLabel(e.target.value)} />
+        <div className={styles["h1-container"]}>
+            <h1 className={styles["h1"]}>Write a post</h1>
+        </div>
+        <div style={{
+            display: "flex",
+            justifyContent: "center",
+            margin: "10px",
+        }}>
+            {/* {
+                (() => {
+                    switch (postState) {
+                        case "writing":
+                            return <div> Writing </div>
+                        case "sending":
+                            return <div> Sending </div>
+                        case "error-wait":
+                            return <div style={{
+                                padding: "10px",
+                                borderRadius: "20px",
+                                color: "var(--color-error-light)",
+                                backgroundColor: "var(--color-error-dark)"
+                            }}> ERROR </div>
+                        case "post-success-wait":
+                            return <div> Post Successfully Submitted </div>
+                    }
+                    return (<div>Invalid State</div>)
+                })()
+            } */}
+            {
+                postState === "error-wait" && (<ErrorText />)
+            }
+        </div>
+        <form onSubmit={submit} className={styles["post-write-form"]}>
+            <textarea className={styles["post-write-body"]} id="post-body" value={postBody} placeholder="Post Body" onInput={(e) => setPostBody(e.target.value)} />
+            <div className={styles["label-container"]}>
+                <label className={styles["label-text"]}>Label</label>
+                <input className={styles["label-input"]} value={postlabel} placeholder="post label" style={{
+
+                }} onInput={(e) => setPostLabel(e.target.value)} />
             </div>
-            <button> Make Post </button>
+            <div className={styles["label-container"]}>
+                <label className={styles["label-text"]}>Select Group</label>
+                <select style={{
+                    backgroundColor: "var(--color-dark",
+                    color: "var(--color-light)",
+                    fontSize: "1.1rem",
+                    fontFamily: "cursive",
+                    padding: "10px",
+                    borderRadius: "20px",
+                }}>
+                    {
+                        userGroups.map((g) => {
+                            return (<option>{g.name}</option>)
+                        })
+                    }
+                    {/* <option>Group A</option>
+                    <option>Group B</option>
+                    <option>Group C</option> */}
+                </select>
+            </div>
+            <button className={styles["publish-btn"]}>Publish</button>
         </form>
     </div>)
 }

@@ -29,11 +29,18 @@ export default function Post({ key, username, postId, content, groupName, canEdi
             padding: "40px",
             fontFamily: "monospace",
             fontWeight: "bold",
-            textDecoration: "underline",
-            fontSize: "xx-large"
+            fontSize: "xx-large",
+            alignItems: "center",
         }}>
             <div>User: {username}</div>
-            {canEdit && (<a href={`/edit-post?postId=${postId}`}>Edit: {username}</a>)}
+            {canEdit && (<a style={{
+                color: "var(--color-light)",
+                borderStyle: "solid",
+                borderWidth: "3px",
+                padding: "10px",
+                borderRadius: "10px",
+                textDecoration: "none",
+            }} href={`/edit-post?postId=${postId}`}>Edit: {username}</a>)}
             <div>Group: {groupName}</div>
         </div>
     </li>)

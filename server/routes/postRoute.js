@@ -17,7 +17,7 @@ router.put("/update", authMiddleware, async (req, res) => {
 });
 router.delete("/delete", authMiddleware, async (req, res) => {
     await Post.deleteOne({
-       _id: req.query.postId,
+        _id: req.query.postId,
     }).catch(() => {
         console.error("Couldn't delete post");
     });
@@ -84,6 +84,12 @@ router.get("/", authMiddleware, async (req, res) => {
 router.post("/create", authMiddleware, async (req, res) => {
     const label = req.body.params.label;
     const body = req.body.params.body;
+    if (body === undefined || body === "") {
+        res.status(400).json({
+            message: "attempt to create a post with an empty body",
+        });
+        return;
+    }
     const posts = await new Post({
         body: body,
         label: label,
