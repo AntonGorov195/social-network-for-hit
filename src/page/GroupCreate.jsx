@@ -17,9 +17,14 @@ export default function GroupCreate(props) {
                         authorization: `Bearer ${localStorage.getItem("token")}`
                     }
                 });
-            console.log(response.data);
+            if (response.status === 201) {
+                setName("");
+                setDescription("");
+                alert("Group successfully created!");
+            }
         }catch(err) {
             console.log(err);
+            alert("Something went wrong!\n Group was not created!");
         }
 
     }
