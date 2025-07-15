@@ -19,7 +19,36 @@ import GroupPosts from "./page/GroupPosts";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
     <React.StrictMode>
-        {/* <HomeScreen /> */}
+        <header
+            style={{
+                display: "flex",
+                // justifyContent: "center",
+                borderStyle: "none",
+                borderBottomStyle: "solid",
+                borderColor: "var(--color-dark)",
+                padding: "10px",
+                borderWidth: "8px",
+            }}
+        >
+            <button
+                style={{
+                    backgroundColor: "var(--color-dark)",
+                    color: "var(--color-light)",
+                    borderStyle: "none",
+                    padding: "10px",
+                    borderRadius: "10px",
+                    fontSize: "1.3rem",
+                    cursor: "pointer",
+                }}
+                onClick={(e) => {
+                    localStorage.removeItem("token");
+                    window.location.href =
+                        window.location.protocol + "//" + window.location.host;
+                }}
+            >
+                Logout
+            </button>
+        </header>
         <BrowserRouter>
             <Routes>
                 <Route index element={<HomeScreen />} />
