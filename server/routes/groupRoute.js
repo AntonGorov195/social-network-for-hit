@@ -22,13 +22,13 @@ router.get("/getAllGroups", async (req, res) => {
         console.error(err);
     }
 });
-router.post("/createGroup", async (req, res) => {
+router.post("/createGroup", authMiddleware, async (req, res) => {
     console.log("trying to create new group");
     try {
         const name = req.body.name;
         const description = req.body.description;
-        const members = req.body.members;
-        const manageruser = req.body.managerUser;
+        const members = Array(req.user.userId);
+        const manageruser = req.user.userId;
         const createdAt = req.body.createdAt
             ? new Date(req.body.createdAt)
             : undefined;
