@@ -59,7 +59,7 @@ router.get("/", authMiddleware, async (req, res) => {
             },
         },
         {
-            $unwind: "$user", // deconstruct the array to get a single object
+            $unwind: "$user",
         },
         ...find,
         {

@@ -6,6 +6,7 @@ const http = require("http");
 const socketIo = require("socket.io");
 const Messages = require("./models/MessagesSchema");
 const authMiddleware = require("./middlewares/authMiddleware");
+const Chats = require("./models/ChatsSchema");
 
 const app = express();
 app.use(cors());
@@ -22,18 +23,16 @@ const userRouter = require("./routes/userRoute");
 const groupRouter = require("./routes/groupRoute");
 const searchRouter = require("./routes/searchRoute");
 const chatRouter = require("./routes/chatRoute");
-const analyticsRouter = require('./routes/analyticsRoute');
+const analyticsRouter = require("./routes/analyticsRoute");
 const aiRouter = require("./routes/AIRoute");
-
 
 app.use("/api/posts", postRouter);
 app.use("/api/users", userRouter);
 app.use("/api/groups", groupRouter);
 app.use("/api/search", searchRouter);
 app.use("/api/chat", chatRouter);
-app.use('/api/analytics',analyticsRouter);
+app.use("/api/analytics", analyticsRouter);
 app.use("/api/AI", aiRouter);
-
 
 app.post("/api/items", async (req, res) => {
     console.log("!");
@@ -52,15 +51,22 @@ io.on("connection", (socket) => {
         const JWT_SECRET = process.env.JWT_SECRET;
         try {
             const token = data.token;
-            let userId = "";
             const decoded = jwt.verify(token, JWT_SECRET);
-            userId = decoded.userId;
-            const msgs = await new Messages({
-                message: data.message,
-                userId: userId,
+            const userId = decoded.userId;
+            chatId = data.chatId;
+            const msg = {
+                text: data.text,
+                sender: userId,
+            };
+            await Chats.findByIdAndUpdate(chatId, {
+                $push: {
+                    messages: msg,
+                },
             });
-            io.emit("chat message", data.message);
-            await msgs.save();
+            io.emit("chat message", {
+                message: msg,
+                chatId: data.chatId,
+            });
         } catch (e) {
             console.error(e);
         }
