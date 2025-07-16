@@ -4,6 +4,7 @@ import Loading from "../components/Loading";
 import { jwtDecode } from 'jwt-decode';
 import './GroupPage.css';
 import {data} from "react-router-dom";
+import FormInput from "../components/FormInput";
 
 function getUserIdFromToken() {
     const token = localStorage.getItem("token");
@@ -24,6 +25,9 @@ export default function GroupPage(props) {
     const [groups, setGroups] = useState([]);
     const [groupUsers, setGroupUsers] = useState({});
     const [showManagerOptions, setShowManagerOptions] = useState({});
+    const [editingGroup, setEditingGroup] = useState(null);
+    const [editingName, setEditingName] = useState("");
+    const [editingDescription, setEditingDescription] = useState("");
     const userId = getUserIdFromToken()
 
 
@@ -91,6 +95,21 @@ const handleDeleteGroup = async (groupId) => {
             console.log(err);
         }
 }
+const handleUpdateGroup =async (groupId,newName,newDescription) => {
+        const token = localStorage.getItem("token");
+        try {
+            await axios.put(`http://localhost:5000/api/groups/updateGroup`,{
+                groupId,
+                name:newName,
+                description:newDescription
+            },{
+                headers: {Authorization: `Bearer ${token}`}
+            })
+            await fetchGroups();
+        }catch(err){
+            console.log(err);
+        }
+}
     return (
         <div>
             {loading ?( <Loading />)
@@ -123,21 +142,40 @@ const handleDeleteGroup = async (groupId) => {
                                         {showManagerOptions[group._id] && (
                                             <div>
                                                 <button onClick={()=>handleDeleteGroup(group._id)}>delete group</button>
-                                                <button>Update group</button>
+                                                <button onClick={()=>{
+                                                setEditingGroup(group);
+                                                    setEditingName(group.name);
+                                                    setEditingDescription(group.description);
+                                                }}>Update group</button>
                                             </div>
                                             )}
                                     </>)}
-                                {userForThisGroup.length > 0 && (
-                                    <ul>
-                                        {userForThisGroup.map((user) => (
-                                            <li key={user.id}>{user.username}</li>
-                                        ))}
-                                    </ul>
-                                )}
-                            </div>
-                        );
-                    })}
-                    </div>
+                                {editingGroup && (
+                                    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+                                        <div className="bg-white rounded-lg p-6 w-96 shadow-lg">
+                                            <h2 className="text-lg font-bold mb-4">Edit Group</h2>
+                                            <FormInput type={"text"} inputName={"Group Name"} value={editingName} setValue={setEditingName} />
+                                            <FormInput type={"text"} inputName={"Group Description"} value={editingDescription} setValue={setEditingDescription} />
+                                            <div className="flex justify-between">
+                                                <button onClick={()=> setEditingGroup(null)}>Cancel</button>
+                                                <button onClick={async ()=>{ await handleUpdateGroup(editingGroup._id,editingName,editingDescription);
+                                                setEditingGroup(null);}}>Save Changes</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                            )
+                                            }
+                                            {userForThisGroup.length > 0 && (
+                                                <ul>
+                                                    {userForThisGroup.map((user) => (
+                                                        <li key={user.id}>{user.username}</li>
+                                                    ))}
+                                                </ul>
+                                            )}
+                                        </div>
+                                        );
+                                        })}
+                                    </div>
                 </div>) }
                 </div>
     )

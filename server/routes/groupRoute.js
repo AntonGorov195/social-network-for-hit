@@ -63,29 +63,35 @@ router.post("/createGroup", authMiddleware, async (req, res) => {
         console.log(err);
     }
 });
-router.put("/updateGroup", async (req, res) => {
+router.put("/updateGroup",authMiddleware, async (req, res) => {
     console.log("trying to update a group");
-    const name = req.body.name;
-    if (!name) {
+    const { name, description, groupId } = req.body;
+
+    if (!groupId) {
         res.status(400).send("missing required parameters");
     } else {
         try {
-            await Group.updateOne(
-                { _id: req.body.groupId },
-                { $set: { name: req.body.name } }
+            // await Group.updateOne(
+            //     { _id: req.body.groupId },
+            //     { $set: { name: req.body.name } }
+            // );
+            const group = await Group.findById(groupId);
+            const loggedInUserID = req.user.userId;
+            if(group.managerUser.toString() !== loggedInUserID) {
+                return res.status(403).json({message:"only the manager can update the group"});
+            }
+            const updatedGroup = await Group.findOneAndUpdate(
+            {_id: groupId},
+                {description,name},
+            {new: true}
             );
-            // const updatedGroup = await Group.findOneAndUpdate(
-            // {name: name},
-            // req.body,
-            // {new: true}
-            // )
-            // if (!updatedGroup) {
-            //     res.status(404).send("group not found");
-            // }
-            // else {
-            //     res.status(200).json({message: 'Group updated successfully', data: updatedGroup});
-            //     console.log("Group updated successfully");
-            // }
+            if (!updatedGroup) {
+                return  res.status(404).send("group not found");
+            }
+            else {
+                res.status(200).json({message: 'Group updated successfully', data: updatedGroup});
+                console.log("Group updated successfully");
+            }
         } catch (error) {
             res.status(500).json({
                 message: "Something went wrong",
