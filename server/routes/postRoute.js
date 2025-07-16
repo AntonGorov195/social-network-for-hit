@@ -2,6 +2,15 @@ const express = require("express");
 const router = express.Router();
 const Post = require("../models/PostsSchema");
 const authMiddleware = require("../middlewares/authMiddleware");
+const multer = require("multer");
+const path = require("path");
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => cb(null, "uploads/videos"), // folder for uploads
+    filename: (req, file, cb) => cb(null, Date.now() + path.extname(file.originalname))
+});
+
+const upload = multer({ storage });
 
 router.get("/post", authMiddleware, async (req, res) => {
     const post = await Post.findById(req.query.postId);
@@ -81,24 +90,56 @@ router.get("/", authMiddleware, async (req, res) => {
     };
     res.json(message);
 });
-router.post("/create", authMiddleware, async (req, res) => {
-    const label = req.body.params.label;
-    const body = req.body.params.body;
-    if (body === undefined || body === "") {
-        res.status(400).json({
-            message: "attempt to create a post with an empty body",
-        });
-        return;
-    }
-    const posts = await new Post({
-        body: body,
-        label: label,
-        userId: req.user.userId,
-    });
-    await posts.save();
-    // TODO:
-    res.json({});
-});
+//router.post("/create", authMiddleware, async (req, res) => {
+//     //const label = req.body.params.label;
+//     //const body = req.body.params.body;
+//     const label = req.body.label;
+//     const body = req.body.body;
+//     const postGroup = req.body.PostGroup;
+//     if (body === undefined || body === "") {
+//         res.status(400).json({
+//             message: "attempt to create a post with an empty body",
+//         });
+//         return;
+//     }
+//     const posts = await new Post({
+//         body: body,
+//         label: label,
+//         userId: req.user.userId,
+//     });
+//     await posts.save();
+//     // TODO:
+//     res.json({});
+router.post("/create", authMiddleware, upload.single("video"),
+        async (req, res) => {
+    console.log("trying to create a post");
+    try {
+                const label = req.body.label;
+                const body = req.body.body;
+                const postGroup = req.body.groupId;
+                const videoPath = req.file ? `/uploads/videos/${req.file.filename}` : null;
+
+                if (!body) {
+                    return res.status(400).json({ message: "Post body required" });
+                }
+
+                const newPost = new Post({
+                    body,
+                    label,
+                    groupId: postGroup,
+                    userId: req.user.userId,
+                    videoUrl: videoPath,
+                });
+
+                await newPost.save();
+                console.log("post created");
+                return res.json({ message: "Post created", post: newPost });
+            } catch (err) {
+                console.error(err);
+                res.status(500).json({ message: "Server error" });
+            }
+        }
+    );
 router.get("/getAllPostsOfGroup/:groupId", async (req, res) => {
     console.log("trying to get all the posts of a group");
     const groupId = req.params.groupId;
