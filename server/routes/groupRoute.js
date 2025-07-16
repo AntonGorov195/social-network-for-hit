@@ -223,25 +223,26 @@ router.put("/addUserToGroup",authMiddleware, async (req, res) => {
 router.put("/deleteUserFromGroup",authMiddleware, async (req, res) => {
     console.log("trying to delete a user from group");
     const userId = req.user.userId;
+    const userIdToRemove = req.body.userId;
     const groupId = req.body.groupId;
-    if (!groupId || !userId) {
+    if (!groupId || !userId || !userIdToRemove) {
         res.status(400).send("missing required parameters");
     }else {
         try {
             const updatedGroup = await Group.findByIdAndUpdate(
                 groupId,
                 {
-                    $pull: {members: userId},
+                    $pull: {members: userIdToRemove},
                     $set: {lastUpdatedAt: new Date()}
                 },
                 { new: true }
             );if(!updatedGroup) {
-                res.status(404).send("group not found");
+                return  res.status(404).send("group not found");
             }
-            res.status(200).json({updatedGroup})
+            return res.status(200).json({updatedGroup})
         }catch(err) {
             console.log(err);
-            res.status(500).json({ error: err });
+            return res.status(500).json({ error: err });
         }
     }
 })

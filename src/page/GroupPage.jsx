@@ -46,18 +46,19 @@ export default function GroupPage(props) {
     useEffect(() => {
         fetchGroups();
     },[]);
-    const handleToggleMembership = async (groupId, isMember) => {
+    const handleToggleMembership = async (groupId, isMember,userId) => {
         const token = localStorage.getItem("token");
         const action = isMember ? 'deleteUserFromGroup' : 'addUserToGroup'
         const endpoint = `http://localhost:5000/api/groups/${action}`;
         try{
-           const res = await axios.put(endpoint,{groupId:groupId},
+           const res = await axios.put(endpoint,{groupId:groupId,userId:userId},
                {
                    headers: {
                        Authorization: `Bearer ${token}`,
                    }
                });
            await fetchGroups();
+           await fetchGroupUsers(groupId)
         }catch(err){
             console.log(err);
         }
@@ -110,6 +111,20 @@ const handleUpdateGroup =async (groupId,newName,newDescription) => {
             console.log(err);
         }
 }
+const handleRemoveUser = async (groupId,userIdToRemove) => {
+        const token = localStorage.getItem("token");
+        if (!window.confirm("Are you sure you want to delete this user?"))return;
+        try {
+            await axios.put(`http://localhost:5000/api/groups/deleteUserFromGroup`,{
+                groupId:groupId,userId:userIdToRemove
+            },
+                {headers: {Authorization: `Bearer ${token}`}});
+            await fetchGroups();
+            await fetchGroupUsers(groupId);
+        }catch(err){
+            console.log(err);
+        }
+}
     return (
         <div>
             {loading ?( <Loading />)
@@ -125,7 +140,7 @@ const handleUpdateGroup =async (groupId,newName,newDescription) => {
                                 <h3>{group.name}</h3>
                                 <p>{group.description}</p>
                                 <button
-                                    onClick={() => handleToggleMembership(group._id, isMember)}
+                                    onClick={() => handleToggleMembership(group._id, isMember,userId)}
                                     className={`${isMember ? "bg-red-500" : "bg-green-500"} text-white`}>
                                     {isMember ? "Leave" : "Join"}
                                 </button>
@@ -133,7 +148,7 @@ const handleUpdateGroup =async (groupId,newName,newDescription) => {
                                         className = {`bg-blue-500 text-white ml-2`}>
                                     Show Members
                                 </button>
-                                {isMember && (
+                                {isManager && (
                                     <>
                                         <button className="bg-purple-500 text-white ml-2" onClick={() => toggleManagerOption(group._id)}>
                                             manager's action
@@ -154,8 +169,8 @@ const handleUpdateGroup =async (groupId,newName,newDescription) => {
                                     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
                                         <div className="bg-white rounded-lg p-6 w-96 shadow-lg">
                                             <h2 className="text-lg font-bold mb-4">Edit Group</h2>
-                                            <FormInput type={"text"} inputName={"Group Name"} value={editingName} setValue={setEditingName} />
-                                            <FormInput type={"text"} inputName={"Group Description"} value={editingDescription} setValue={setEditingDescription} />
+                                            <FormInput type={"text"} inputName={"Group Name"} value={editingName} setValue={setEditingName} required={true} />
+                                            <FormInput type={"text"} inputName={"Group Description"} value={editingDescription} setValue={setEditingDescription} required={true} />
                                             <div className="flex justify-between">
                                                 <button onClick={()=> setEditingGroup(null)}>Cancel</button>
                                                 <button onClick={async ()=>{ await handleUpdateGroup(editingGroup._id,editingName,editingDescription);
@@ -168,7 +183,12 @@ const handleUpdateGroup =async (groupId,newName,newDescription) => {
                                             {userForThisGroup.length > 0 && (
                                                 <ul>
                                                     {userForThisGroup.map((user) => (
-                                                        <li key={user.id}>{user.username}</li>
+                                                        <li key={user.id}>
+                                                            <span>{user.username}</span>
+                                                    {isManager && user._id !== userId && (
+                                                        <button className = "bg-red-500"
+                                                        onClick={() => handleRemoveUser(group._id,user._id)}>Remove </button> )}
+                                                        </li>
                                                     ))}
                                                 </ul>
                                             )}
