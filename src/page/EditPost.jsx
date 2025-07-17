@@ -51,8 +51,10 @@ export default function EditPost() {
                     }
                 }
             ).then((res) => {
+                alert("Post successfully updated.")
                 console.log(res.status);
             }).catch((err) => {
+                alert("Something went wrong, please try again.")
                 console.error(err);
             })
         }}>
@@ -70,8 +72,14 @@ export default function EditPost() {
                         }
                     }
                 ).then((res) => {
-                    console.log(res.status);
+                    alert("Post successfully deleted.")
+                    window.location.href =
+                        window.location.protocol +
+                        "//" +
+                        window.location.host +
+                        "/posts";
                 }).catch((err) => {
+                    alert("Failed deleting post.")
                     console.error(err);
                 })
             }}> Delete </button>
