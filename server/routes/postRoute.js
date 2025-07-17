@@ -4,6 +4,7 @@ const Post = require("../models/PostsSchema");
 const authMiddleware = require("../middlewares/authMiddleware");
 const multer = require("multer");
 const path = require("path");
+const {mkdirSync, writeFileSync} = require("node:fs");
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => cb(null, "uploads/videos"), // folder for uploads
@@ -80,6 +81,8 @@ router.get("/", authMiddleware, async (req, res) => {
                 groupName: "$group.name",
                 username: "$user.username",
                 userId: "$user._id",
+                videoUrl: "$videoUrl",
+                canvasUrl: "$canvasUrl",
             },
         },
     ]);
@@ -118,6 +121,24 @@ router.post("/create", authMiddleware, upload.single("video"),
                 const body = req.body.body;
                 const postGroup = req.body.groupId;
                 const videoPath = req.file ? `/uploads/videos/${req.file.filename}` : null;
+                const canvasImage =req.body.canvasImage;
+
+        let canvasImagePath = null;
+
+        if (canvasImage) {
+            console.log("got canvas");
+            try {
+                const base64Data = canvasImage.replace(/^data:image\/png;base64,/, "");
+                const filename = `${Date.now()}.png`;
+                const savePath = path.join(__dirname, "../uploads/canvas", filename);
+                mkdirSync(path.dirname(savePath), {recursive: true});
+                writeFileSync(savePath, base64Data, "base64");
+                canvasImagePath = `/uploads/canvas/${filename}`;
+            }catch (err){
+                console.error(err);
+            }
+
+        }
 
                 if (!body) {
                     return res.status(400).json({ message: "Post body required" });
@@ -129,6 +150,7 @@ router.post("/create", authMiddleware, upload.single("video"),
                     groupId: postGroup,
                     userId: req.user.userId,
                     videoUrl: videoPath,
+                    canvasUrl: canvasImagePath,
                 });
 
                 await newPost.save();

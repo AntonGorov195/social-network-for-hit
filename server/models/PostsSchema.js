@@ -7,7 +7,8 @@ const PostsSchema = new Schema({
     label: { type: String, required: false },
     groupId: { type: Schema.Types.ObjectId, ref: "group", required: false },
     userId: { type: Schema.Types.ObjectId, required: false, ref: "User" },
-    videoUrl: { type: String}
+    videoUrl: { type: String},
+    canvasUrl: String,
 });
 module.exports = mongoose.model(
     "posts",

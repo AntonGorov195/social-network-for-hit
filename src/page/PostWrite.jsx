@@ -124,9 +124,10 @@
 // }
 
 import axios from "axios";
-import { useEffect, useState } from "react";
+import {useEffect, useRef, useState} from "react";
 import styles from "./PostWrite.module.css";
 import ErrorText from "../components/ErrorText";
+import CanvasDraw from "react-canvas-draw";
 
 export default function PostWrite() {
     const [postState, setPostState] = useState("writing");
@@ -136,6 +137,9 @@ export default function PostWrite() {
     const [selectedGroup, setSelectedGroup] = useState("");
     const [videoFile, setVideoFile] = useState(null);
     const token = localStorage.getItem('token');
+    const [showCanvas, setShowCanvas] = useState(false);
+    const [canvasImage, setCanvasImage] = useState(null);
+    const canvasRef = useRef(null);
 
     const submit = async (e) => {
         e.preventDefault();
@@ -151,6 +155,9 @@ export default function PostWrite() {
         formData.append("groupId", selectedGroup);
         if (videoFile) {
             formData.append("video", videoFile);
+        }
+        if (canvasImage) {
+            formData.append("canvasImage", canvasImage);
         }
 
         setPostState("sending");
@@ -185,6 +192,15 @@ export default function PostWrite() {
             setPostState("error-wait");
         });
     }, []);
+
+    const toggleCanvas = () => {
+        setShowCanvas(!showCanvas);
+    };
+    const saveCanvasImage = () => {
+        const dataURL = canvasRef.current.getDataURL("png");
+        setCanvasImage(dataURL);
+        console.log("Canvas Image Base64:", dataURL.slice(0, 50) + "...");
+    };
 
     return (
         <div>
@@ -248,6 +264,33 @@ export default function PostWrite() {
                     />
                     {videoFile && <p>Selected: {videoFile.name}</p>}
                 </div>
+                <button type="button" onClick={toggleCanvas}>
+                    {showCanvas ? "Hide Canvas" : "Add Drawing"}
+                </button>
+                {showCanvas && (
+                    <div style={{ marginTop: "10px" }}>
+                        <CanvasDraw
+                            ref={canvasRef}
+                            canvasWidth={400}
+                            canvasHeight={300}
+                            brushRadius={2}
+                            brushColor="#000"
+                            lazyRadius={0}
+                            hideGrid
+                        />
+                        <div style={{ marginTop: "5px" }}>
+                            <button type="button" onClick={saveCanvasImage}>
+                                Save Drawing
+                            </button>
+                        </div>
+                    </div>
+                )}
+                {canvasImage && (
+                    <div style={{ marginTop: "10px" }}>
+                        <p>Preview:</p>
+                        <img src={canvasImage} alt="canvas preview" width={200} />
+                    </div>
+                )}
 
                 <button className={styles["publish-btn"]}>Publish</button>
             </form>

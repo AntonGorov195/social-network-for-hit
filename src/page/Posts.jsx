@@ -70,7 +70,7 @@ export default function Posts(props) {
                                     // TODO: Use ul tag for the posts list 
                                     return (
                                         posts.map((p) => {
-                                            return <Post postId={p._id} key={p._id} canEdit={p.userId === userId} username={p.username} content={p.body} groupName={p.groupName} date={p.date} />
+                                            return <Post postId={p._id} key={p._id} canEdit={p.userId === userId} username={p.username} content={p.body} groupName={p.groupName} date={p.date} videoUrl={p.videoUrl} canvasUrl={p.canvasUrl} />
                                         })
                                     )
                                 case "error":

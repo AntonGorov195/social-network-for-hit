@@ -1,4 +1,4 @@
-export default function Post({ key, username, postId, content, groupName, canEdit, date }) {
+export default function Post({ key, username, postId, content, groupName, canEdit, date, videoUrl,canvasUrl}) {
     return (<li className="post" key={key} style={{
         flexDirection: "column",
         display: "flex",
@@ -22,6 +22,19 @@ export default function Post({ key, username, postId, content, groupName, canEdi
         }}>
             {content}
         </div>
+        {videoUrl && (
+            <video width="400" controls>
+                <source src = {`http://localhost:5000/uploads/videos/1752696611522.mp4`} type="video/mp4" />
+                Your browser does not support the video tag.
+            </video>
+        )}
+        {canvasUrl && (
+            <img
+                src={`http://localhost:5000${canvasUrl}`}
+                alt="canvas drawing"
+                width={400}
+            />
+        )}
         <div style={{
             display: "flex",
             justifyContent: "space-between",
