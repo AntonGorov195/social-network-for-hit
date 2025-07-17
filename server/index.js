@@ -3,9 +3,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 require("dotenv").config();
 const http = require("http");
-const socketIo = require("socket.io");
-const Messages = require("./models/MessagesSchema");
-const authMiddleware = require("./middlewares/authMiddleware");
+const InitSocket = require("./socket/socket");
 
 const app = express();
 app.use(cors());
@@ -22,20 +20,18 @@ const userRouter = require("./routes/userRoute");
 const groupRouter = require("./routes/groupRoute");
 const searchRouter = require("./routes/searchRoute");
 const chatRouter = require("./routes/chatRoute");
-const analyticsRouter = require('./routes/analyticsRoute');
+const analyticsRouter = require("./routes/analyticsRoute");
 const aiRouter = require("./routes/AIRoute");
 const {join} = require("node:path");
-
 
 app.use("/api/posts", postRouter);
 app.use("/api/users", userRouter);
 app.use("/api/groups", groupRouter);
 app.use("/api/search", searchRouter);
 app.use("/api/chat", chatRouter);
-app.use('/api/analytics',analyticsRouter);
+app.use("/api/analytics", analyticsRouter);
 app.use("/api/AI", aiRouter);
 app.use("/uploads", express.static(join(__dirname, "uploads")));
-
 
 app.post("/api/items", async (req, res) => {
     console.log("!");
@@ -45,29 +41,7 @@ app.post("/api/items", async (req, res) => {
 });
 //
 const server = http.createServer(app);
-const io = socketIo(server, {
-    cors: { origin: "http://localhost:3000" },
-});
-io.on("connection", (socket) => {
-    socket.on("chat message", async (data) => {
-        const jwt = require("jsonwebtoken");
-        const JWT_SECRET = process.env.JWT_SECRET;
-        try {
-            const token = data.token;
-            let userId = "";
-            const decoded = jwt.verify(token, JWT_SECRET);
-            userId = decoded.userId;
-            const msgs = await new Messages({
-                message: data.message,
-                userId: userId,
-            });
-            io.emit("chat message", data.message);
-            await msgs.save();
-        } catch (e) {
-            console.error(e);
-        }
-    });
-});
+InitSocket(server)
 // Connect to MongoDB
 mongoose
     .connect(process.env.MONGO_URI, {})

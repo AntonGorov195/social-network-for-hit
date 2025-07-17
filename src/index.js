@@ -18,6 +18,7 @@ import Chat from "./page/Chat";
 import GroupPosts from "./page/GroupPosts";
 import GroupPage from "./page/GroupPage";
 import GroupCreate from "./page/GroupCreate";
+import Chats from "./page/Chats";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -31,18 +32,11 @@ root.render(
                 borderColor: "var(--color-dark)",
                 padding: "10px",
                 borderWidth: "8px",
+                gap: "5px",
             }}
         >
             <button
-                style={{
-                    backgroundColor: "var(--color-dark)",
-                    color: "var(--color-light)",
-                    borderStyle: "none",
-                    padding: "10px",
-                    borderRadius: "10px",
-                    fontSize: "1.3rem",
-                    cursor: "pointer",
-                }}
+                className="btn-small"
                 onClick={(e) => {
                     localStorage.removeItem("token");
                     window.location.href =
@@ -50,6 +44,66 @@ root.render(
                 }}
             >
                 Logout
+            </button>
+            <button
+                className="btn-small"
+                onClick={(e) => {
+                    window.location.href =
+                        window.location.protocol +
+                        "//" +
+                        window.location.host +
+                        "/chats";
+                }}
+            >
+                Chat
+            </button>
+            <button
+                className="btn-small"
+                onClick={(e) => {
+                    window.location.href =
+                        window.location.protocol +
+                        "//" +
+                        window.location.host +
+                        "/posts";
+                }}
+            >
+                Posts
+            </button>
+            <button
+                className="btn-small"
+                onClick={(e) => {
+                    window.location.href =
+                        window.location.protocol +
+                        "//" +
+                        window.location.host +
+                        "/edit-user";
+                }}
+            >
+                Edit Profile
+            </button>
+            <button
+                className="btn-small"
+                onClick={(e) => {
+                    window.location.href =
+                        window.location.protocol +
+                        "//" +
+                        window.location.host +
+                        "/create-group";
+                }}
+            >
+                Create New Group
+            </button>
+            <button
+                className="btn-small"
+                onClick={(e) => {
+                    window.location.href =
+                        window.location.protocol +
+                        "//" +
+                        window.location.host +
+                        "/groups";
+                }}
+            >
+                View All Groups
             </button>
         </header>
         <BrowserRouter>
@@ -64,9 +118,10 @@ root.render(
                 <Route path="login" element={<Login />} />
                 <Route path="search" element={<Search />} />
                 <Route path="post-write" element={<PostWrite />} />
-                <Route path="analytics" element={<AnalyticsPage/>}/>
-                <Route path="groups" element={<GroupPage/>}/>
-                <Route path="create-group" element={<GroupCreate/>} />
+                <Route path="analytics" element={<AnalyticsPage />} />
+                <Route path="groups" element={<GroupPage />} />
+                <Route path="create-group" element={<GroupCreate />} />
+                <Route path="chats" element={<Chats />} />
                 <Route path="/*" element={<PageNotFound />} />
             </Routes>
         </BrowserRouter>
