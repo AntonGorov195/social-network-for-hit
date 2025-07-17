@@ -2,6 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import FormInput from "../components/FormInput";
+import ErrorText from "../components/ErrorText";
 
 export default function EditUser() {
     /**
@@ -46,7 +47,7 @@ export default function EditUser() {
                         </div>)
                     case "error":
                         return (
-                            <div> Error </div>
+                            <ErrorText />
                         )
                     case "success":
                         return (
@@ -54,7 +55,7 @@ export default function EditUser() {
                                 <h1 style={{
                                     backgroundColor: "var(--color-dark)",
                                     color: "var(--color-light)",
-                                    padding: "5px",
+                                    padding: "15px",
                                     margin: "5px",
                                     borderRadius: "20px",
                                 }}> Edit User </h1>

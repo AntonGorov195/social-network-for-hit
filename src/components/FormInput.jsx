@@ -18,6 +18,7 @@ export default function FormInput({ type, value, setValue, inputName, placeholde
                 borderColor: "var(--color-light)",
                 backgroundColor: "var(--color-dark)",
                 color: "var(--color-light)",
+                flex: "1",
             }} type={type}
                 value={value}
                 onChange={(e) => setValue(e.target.value)}

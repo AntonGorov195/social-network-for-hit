@@ -8,7 +8,7 @@ const ChatsSchame = new mongoose.Schema({
         {
             text: { type: String, default: "" },
             date: { type: Date, default: Date.now() },
-            sender: { type: mongoose.Schema.Types.ObjectId },
+            sender: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
         },
     ],
 });

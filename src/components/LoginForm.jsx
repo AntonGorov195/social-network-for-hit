@@ -19,8 +19,9 @@ export default function LoginForm (props) {
                 localStorage.setItem("token", token);
                 props.onLogin() // call the function to change the is register to true - so we will see the posts
             }
-        }catch (error) {
-            console.log(error)
+        } catch (error) {
+            alert("Login failed, try again");
+            console.log(error);
         }
         //TD: check in DB
     }
@@ -37,9 +38,9 @@ export default function LoginForm (props) {
                 }}>
                     <FormInput type="text" value={username} setValue={setUsername} inputName={"Username"} required={true}/>
                     <FormInput type="password" value={password} setValue={setPassword} inputName={"Password"} required={true}/>
-                    <button style={{width: "100%"}} onClick={handleSignIn}>Sign in</button>
+                    <button className="btn-big" style={{width: "100%"}} onClick={handleSignIn}>Sign in</button>
                 </form>
-                <button onClick={() => props.setRegistrationMode(true)}>Sign up</button>
+                <button className="btn-big" onClick={() => props.setRegistrationMode(true)}>Sign up</button>
             </div>
         </div>
     )

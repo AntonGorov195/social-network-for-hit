@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react"
+import ErrorText from "../components/ErrorText";
 
 export default function Chats() {
     /**
@@ -13,13 +14,13 @@ export default function Chats() {
     const token = localStorage.getItem('token');
 
     useEffect(() => {
-        axios.get("http://localhost:5000/api/users/", {
+        axios.get("http://localhost:5000/api/chat/user", {
             headers: {
                 Authorization: `Bearer ${token}`,
             }
         }).then((res) => {
             setLoadState("success");
-            setChats(res.data.user.chats);
+            setChats(res.data.chats);
         }).catch((e) => {
             setLoadState("error");
             console.error(e);
@@ -31,17 +32,16 @@ export default function Chats() {
             (() => {
                 switch (loadState) {
                     case "loading":
-                        return (<div> Loading </div>)
+                        return (<div> </div>)
                     case "success":
                         return (<div>
-                            Your chats
                             {
                                 chats.map((chat) => {
-                                    return (<div style={{ display: "flex", flex: "1", justifyContent: "center", margin: "10px" }}><a className="btn-big" href={"/chat?chatId=" + chat}> Chat </a></div>)
+                                    return (<div style={{ display: "flex", flex: "1", justifyContent: "center", margin: "10px" }}><a className="btn-big" href={"/chat?chatId=" + chat.chatId}> Chat with: {chat.otherUser} </a></div>)
                                 })
                             } </div>)
                     case "error":
-                        return (<div> Error </div>)
+                        return (<ErrorText/>)
                     default:
                         return (<div> Invalid State</div>)
                 }

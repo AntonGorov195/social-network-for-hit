@@ -74,23 +74,25 @@ textarea::placeholder {
     background-color: var(--color-dark);
 }
 .btn-small {
+    border-style: solid;
     background-color: var(--color-dark);
     color: var(--color-light);
+    border-color: var(--color-light);
     font-size: 1.2rem;
     padding: 10px;
     border-radius: 10px;
     cursor: pointer;
-    border-style: none;
     transition-duration: 0s;
 }
 .btn-big {
+    border-style: solid;
     background-color: var(--color-dark);
     color: var(--color-light);
+    border-color: var(--color-light);
     font-size: 1.5rem;
     padding: 15px;
     border-radius: 20px;
     cursor: pointer;
-    border-style: none;
 }
 .btn-small:hover,
 .btn-big:hover {

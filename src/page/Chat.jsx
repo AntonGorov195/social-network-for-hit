@@ -7,12 +7,11 @@ const socket = io('http://localhost:5000');
 
 export default function Chat() {
     const [userMessage, setUserMessage] = useState("");
-    const [chat, setChat] = useState(null);
+    const [messages, setMessages] = useState([]);
     const [userId, setUserId] = useState(null);
     const token = localStorage.getItem('token');
     const [searchParam, setSearchParam] = useSearchParams();
     const chatId = searchParam.get("chatId");
-    console.log(chatId)
 
     useEffect(() => {
         axios.get("http://localhost:5000/api/chat",
@@ -26,49 +25,57 @@ export default function Chat() {
             }
         ).then((res) => {
             console.log(res.data);
-            setChat(res.data.chat);
+            setMessages(res.data.messages);
             setUserId(res.data.userId);
         }).catch((e) => {
             console.error(e);
         });
+        socket.emit('join-chat', chatId);
 
         const handleNewMessage = (msg) => {
             console.log(msg)
-            if (msg.chatId !== chatId) {
-                return;
-            }
-            setChat(prev => {
-                return {
-                    ...prev,
-                    messages: [...prev.messages, msg.message]
-                };
+            setMessages(prev => {
+                return [...prev, msg];
             });
         }
-
-        socket.on("chat message", handleNewMessage)
+        socket.on("receive-message", handleNewMessage);
         return () => {
-            socket.off('chat message', handleNewMessage);
-            // socket.disconnect();
+            socket.off('receive-message');
         };
     }, []);
-    if (chat === null) {
-        return (<div> Loading </div>)
-    }
+    // if (messages === null) {
+    //     return (<div> Loading </div>)
+    // }
     return (<div>
         <ul style={{
             listStyle: "none",
-            padding: "0"
+            padding: "0",
+            display: "flex",
+            flexDirection: "column",
         }}>
-            {chat.messages.map((msg) => {
+            {messages.map((msg) => {
                 return (<li style={{
                     margin: "5px",
                     padding: "10px",
                     fontSize: "1.1rem",
                     borderRadius: "10px",
                     color: "var(--color-light)",
-                    backgroundColor: userId === msg.sender ? "var(--color-dark)" : "black",
+                    backgroundColor: userId === msg.sender._id ? "var(--color-dark)" : "#172638ff",
+                    width: "60%",
+                    alignSelf: userId === msg.sender._id ? "end" : "start",
                 }}
-                ><pre>{msg.text}</pre></li>)
+                ><pre style={{
+                    borderStyle: "solid",
+                    padding: "20px",
+                    borderRadius: "20px",
+                    fontFamily: "cursive",
+                }}>
+                        {msg.text}
+                    </pre>
+                    <div>
+                        {msg.sender.username}
+                    </div>
+                </li>)
             })}
         </ul>
         <div style={{
@@ -82,13 +89,14 @@ export default function Chat() {
                 alignItems: "center",
                 borderRadius: "20px",
                 padding: "30px",
+                gap: "5px",
             }} onSubmit={(e) => {
                 e.preventDefault();
                 if (userMessage === "") {
                     alert("Can't send empty message")
                     return
                 }
-                socket.emit("chat message", {
+                socket.emit("send-message", {
                     chatId: chatId,
                     text: userMessage,
                     token: token,
@@ -101,8 +109,6 @@ export default function Chat() {
                         backgroundColor: "var(--color-dark)",
                         color: "var(--color-light)",
                         padding: "10px",
-                        borderStyle: "solid",
-                        borderWidth: "5px",
                         fontSize: "1.3rem",
                         fontFamily: "cursive",
                         minWidth: "66vw",

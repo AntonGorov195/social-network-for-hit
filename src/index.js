@@ -64,10 +64,22 @@ root.render(
                         window.location.protocol +
                         "//" +
                         window.location.host +
+                        "/posts";
+                }}
+            >
+                Posts
+            </button>
+            <button
+                className="btn-small"
+                onClick={(e) => {
+                    window.location.href =
+                        window.location.protocol +
+                        "//" +
+                        window.location.host +
                         "/edit-user";
                 }}
             >
-                Edit User
+                Edit Profile
             </button>
         </header>
         <BrowserRouter>
