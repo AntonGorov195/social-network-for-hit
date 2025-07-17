@@ -81,6 +81,30 @@ root.render(
             >
                 Edit Profile
             </button>
+            <button
+                className="btn-small"
+                onClick={(e) => {
+                    window.location.href =
+                        window.location.protocol +
+                        "//" +
+                        window.location.host +
+                        "/create-group";
+                }}
+            >
+                Create New Group
+            </button>
+            <button
+                className="btn-small"
+                onClick={(e) => {
+                    window.location.href =
+                        window.location.protocol +
+                        "//" +
+                        window.location.host +
+                        "/groups";
+                }}
+            >
+                View All Groups
+            </button>
         </header>
         <BrowserRouter>
             <Routes>
