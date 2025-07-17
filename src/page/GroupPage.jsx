@@ -165,7 +165,7 @@ const handleRemoveUser = async (groupId,userIdToRemove) => {
                                             </div>
                                             )}
                                     </>)}
-                                {editingGroup && (
+                                {editingGroup === group && (
                                     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
                                         <div className="bg-white rounded-lg p-6 w-96 shadow-lg">
                                             <h2 className="text-lg font-bold mb-4">Edit Group</h2>
