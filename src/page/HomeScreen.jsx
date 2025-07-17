@@ -3,11 +3,10 @@ import Login from "./Login";
 import Posts from "./Posts";
 
 export default function HomeScreen() {
-    const [isRegister, setIsRegister] = useState(false);
-    const [isLogged, setIsLogged] = useState(true);
+    const [isRegister, setIsRegister] = useState(localStorage.getItem('token') !== null);
 
     useEffect(() => {
-        console.log("useEffect")
+        
     }, [isRegister])
 
     return isRegister ? (
@@ -15,7 +14,6 @@ export default function HomeScreen() {
     ) : (
         <Login onLogin={() => {
                 setIsRegister(true);
-                console.log("HIGGsdfafh");
         }} />
     );
 }

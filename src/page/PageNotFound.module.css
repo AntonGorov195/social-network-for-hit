@@ -1,0 +1,21 @@
+.page-not-found {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 20px;
+    width: 100%;
+    min-height: 7rem;
+    padding: 30px;
+    background-color: var(--color-error-dark);
+    color: var(--color-error-light);
+    font-size: 2rem;
+    text-align: center;
+}
+.page-not-found-container {
+    display: flex;
+    background-color: var(--color-error-light);
+    justify-content: center;
+    align-items: center;
+    padding: 30px;
+    min-height: 100vh;
+}

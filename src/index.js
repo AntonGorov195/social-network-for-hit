@@ -8,17 +8,66 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Posts from "./page/Posts";
 import Login from "./page/Login";
 import Search from "./page/Search";
+import PostWrite from "./page/PostWrite";
+import PageNotFound from "./page/PageNotFound";
+import EditPost from "./page/EditPost";
+import AnalyticsPage from "./page/AnalyticsPage";
+import EditGroup from "./page/EditGroup";
+import EditUser from "./page/EditUser";
+import Chat from "./page/Chat";
+import GroupPosts from "./page/GroupPosts";
+import GroupPage from "./page/GroupPage";
+import GroupCreate from "./page/GroupCreate";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
     <React.StrictMode>
-        {/* <HomeScreen /> */}
+        <header
+            style={{
+                display: "flex",
+                // justifyContent: "center",
+                borderStyle: "none",
+                borderBottomStyle: "solid",
+                borderColor: "var(--color-dark)",
+                padding: "10px",
+                borderWidth: "8px",
+            }}
+        >
+            <button
+                style={{
+                    backgroundColor: "var(--color-dark)",
+                    color: "var(--color-light)",
+                    borderStyle: "none",
+                    padding: "10px",
+                    borderRadius: "10px",
+                    fontSize: "1.3rem",
+                    cursor: "pointer",
+                }}
+                onClick={(e) => {
+                    localStorage.removeItem("token");
+                    window.location.href =
+                        window.location.protocol + "//" + window.location.host;
+                }}
+            >
+                Logout
+            </button>
+        </header>
         <BrowserRouter>
             <Routes>
                 <Route index element={<HomeScreen />} />
                 <Route path="posts" element={<Posts />} />
+                <Route path="edit-group" element={<EditGroup />} />
+                <Route path="edit-user" element={<EditUser />} />
+                <Route path="chat" element={<Chat />} />
+                <Route path="group-posts" element={<GroupPosts />} />
+                <Route path="edit-post" element={<EditPost />} />
                 <Route path="login" element={<Login />} />
                 <Route path="search" element={<Search />} />
+                <Route path="post-write" element={<PostWrite />} />
+                <Route path="analytics" element={<AnalyticsPage/>}/>
+                <Route path="groups" element={<GroupPage/>}/>
+                <Route path="create-group" element={<GroupCreate/>} />
+                <Route path="/*" element={<PageNotFound />} />
             </Routes>
         </BrowserRouter>
     </React.StrictMode>

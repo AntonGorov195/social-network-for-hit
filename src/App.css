@@ -47,6 +47,8 @@
     --color-link: #ffddc1;
     --color-active: #f7d371;
     --color-light-red: #fabce2;
+    --color-error-light: #f7be98;
+    --color-error-dark: #5e1111;
 }
 * {
     margin: 0;
@@ -54,14 +56,14 @@
 }
 body {
     background-color: var(--color-light);
-    padding: 30px;
+    min-height: 100vh;
 }
 /* .post {
     color: var(--color-light);
     background-color: var(--color-dark);
     border-radius: 3rem;
 } */
-input::placeholder {
+input::placeholder, textarea::placeholder {
     font-weight: bold;
     opacity: 0.5;
     color: var(--color-light);
