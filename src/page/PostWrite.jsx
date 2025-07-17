@@ -174,8 +174,10 @@ export default function PostWrite() {
             setPostBody("");
             setPostLabel("");
             setVideoFile(null);
+            alert("Post created successfully.");
         } catch (err) {
             console.error(err);
+            alert("failed to create post.");
             setPostState("error-wait");
         }
     };
