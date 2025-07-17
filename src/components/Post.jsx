@@ -1,4 +1,21 @@
+import {useState} from "react";
+import axios from "axios";
+
 export default function Post({ key, username, postId, content, groupName, canEdit, date, videoUrl,canvasUrl}) {
+   const [showSummary, setShowSummary] = useState(false);
+   const [summaryText, setSummaryText] = useState("");
+   const getSummary = async () => {
+       const data ={"text":content}
+       try {
+           const summary = await axios.post("http://localhost:5000/api/AI/post",data)
+           if(summary.status === 200) {
+               setSummaryText(summary.data);
+               setShowSummary(true);
+           }
+       }catch (e) {
+           console.error(e);
+       }
+   }
     return (<li className="post" key={key} style={{
         flexDirection: "column",
         display: "flex",
@@ -10,6 +27,38 @@ export default function Post({ key, username, postId, content, groupName, canEdi
         width: "100%",
         borderRadius: "15px",
     }}>
+        <div style={{ position: "relative", padding: "1rem" }}>
+            { !showSummary &&<button onClick={() => {getSummary()}} style={{
+            position: "absolute",
+            top: "5px",
+            right: "10px",
+            backgroundColor: "#0f151b",
+            color: "white",
+            border: "none",
+            padding: "8px 16px",
+            borderRadius: "8px",
+            cursor: "pointer",
+            fontWeight: "bold",
+        }}>Click to summarize </button>}
+        {showSummary && (
+            <div
+                style={{
+                    border: "2px solid #ddd",
+                    borderRadius: "10px",
+                    padding: "1rem",
+                    marginTop: "3rem",
+                    backgroundColor: "#9bcabb",
+                    boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
+                    color: "#222",
+                }}
+            >
+                <h3 style={{marginTop: 0, borderBottom: "1px solid #ccc", paddingBottom: "0.5rem"}}>
+                    TL;DR
+                </h3>
+                <p style={{margin: 0}}>{summaryText}</p>
+            </div>
+        )}
+        </div>
         <div style={{
             borderStyle: "solid",
             borderColor: "var(--color-light)",

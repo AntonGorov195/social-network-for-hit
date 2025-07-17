@@ -43,4 +43,20 @@ try {
     res.status(500).json({error:'Something went wrong'});
 }
 })
+router.post("/post", async (req, res) => {
+    console.log("start summarize post")
+    try {
+        const textToSummarize = req.body.text;
+        if (!textToSummarize) {
+            return res.status(400).json({error:'No text found to summarize'});
+        }else {
+            const summarizedText = await summarizeText(textToSummarize);
+            return res.status(200).json(summarizedText);
+        }
+    }catch(err){
+        console.log(err);
+        res.status(500).json({error:'Something went wrong'});
+    }
+
+})
 module.exports = router;
