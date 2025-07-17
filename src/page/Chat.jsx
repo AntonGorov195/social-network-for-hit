@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { io } from "socket.io-client"
 
 const socket = io('http://localhost:5000');
@@ -7,10 +8,17 @@ const socket = io('http://localhost:5000');
 export default function Chat() {
     const [userMessage, setUserMessage] = useState("");
     const [messages, setMessages] = useState([]);
+    const [userId, setUserId] = useState(null);
     const token = localStorage.getItem('token');
+    const [searchParam, setSearchParam] = useSearchParams();
+    const chatId = searchParam.get("chatId");
+
     useEffect(() => {
-        axios.get("http://localhost:5000/api/chat/messages",
+        axios.get("http://localhost:5000/api/chat",
             {
+                params: {
+                    chatId: chatId,
+                },
                 headers: {
                     Authorization: `Bearer ${token}`,
                 }
@@ -18,25 +26,32 @@ export default function Chat() {
         ).then((res) => {
             console.log(res.data);
             setMessages(res.data.messages);
+            setUserId(res.data.userId);
         }).catch((e) => {
             console.error(e);
         });
-        const handleNewMessage = (msg) => {
-            setMessages(prev => [...prev, {
-                message: msg,
-            }]);
-        }
+        socket.emit('join-chat', chatId);
 
-        socket.on("chat message", handleNewMessage)
+        const handleNewMessage = (msg) => {
+            console.log(msg)
+            setMessages(prev => {
+                return [...prev, msg];
+            });
+        }
+        socket.on("receive-message", handleNewMessage);
         return () => {
-            socket.off('chat message', handleNewMessage);
-            // socket.disconnect();
+            socket.off('receive-message');
         };
     }, []);
+    // if (messages === null) {
+    //     return (<div> Loading </div>)
+    // }
     return (<div>
         <ul style={{
             listStyle: "none",
-            padding: "0"
+            padding: "0",
+            display: "flex",
+            flexDirection: "column",
         }}>
             {messages.map((msg) => {
                 return (<li style={{
@@ -45,9 +60,22 @@ export default function Chat() {
                     fontSize: "1.1rem",
                     borderRadius: "10px",
                     color: "var(--color-light)",
-                    backgroundColor: "var(--color-dark)"
+                    backgroundColor: userId === msg.sender._id ? "var(--color-dark)" : "#172638ff",
+                    width: "60%",
+                    alignSelf: userId === msg.sender._id ? "end" : "start",
                 }}
-                ><pre>{msg.message}</pre></li>)
+                ><pre style={{
+                    borderStyle: "solid",
+                    padding: "20px",
+                    borderRadius: "20px",
+                    fontFamily: "cursive",
+                }}>
+                        {msg.text}
+                    </pre>
+                    <div>
+                        {msg.sender.username}
+                    </div>
+                </li>)
             })}
         </ul>
         <div style={{
@@ -61,14 +89,16 @@ export default function Chat() {
                 alignItems: "center",
                 borderRadius: "20px",
                 padding: "30px",
+                gap: "5px",
             }} onSubmit={(e) => {
                 e.preventDefault();
                 if (userMessage === "") {
                     alert("Can't send empty message")
                     return
                 }
-                socket.emit("chat message", {
-                    message: userMessage,
+                socket.emit("send-message", {
+                    chatId: chatId,
+                    text: userMessage,
                     token: token,
                 });
                 setUserMessage("");
@@ -79,8 +109,6 @@ export default function Chat() {
                         backgroundColor: "var(--color-dark)",
                         color: "var(--color-light)",
                         padding: "10px",
-                        borderStyle: "solid",
-                        borderWidth: "5px",
                         fontSize: "1.3rem",
                         fontFamily: "cursive",
                         minWidth: "66vw",

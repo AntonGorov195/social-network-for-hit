@@ -6,5 +6,6 @@ export default function ErrorText() {
         backgroundColor: "var(--color-error-dark)",
         fontSize: "3rem",
         fontFamily: "cursive",
+        textAlign: "center",
     }}> ERROR </div>)
 }

@@ -127,7 +127,7 @@ import axios from "axios";
 import {useEffect, useRef, useState} from "react";
 import styles from "./PostWrite.module.css";
 import ErrorText from "../components/ErrorText";
-import CanvasDraw from "react-canvas-draw";
+import { ReactSketchCanvas } from "react-sketch-canvas";
 
 export default function PostWrite() {
     const [postState, setPostState] = useState("writing");
@@ -198,10 +198,15 @@ export default function PostWrite() {
     const toggleCanvas = () => {
         setShowCanvas(!showCanvas);
     };
-    const saveCanvasImage = () => {
-        const dataURL = canvasRef.current.getDataURL("png");
-        setCanvasImage(dataURL);
-        console.log("Canvas Image Base64:", dataURL.slice(0, 50) + "...");
+    const saveCanvasImage = async () => {
+        if (canvasRef.current) {
+            const dataURL = await canvasRef.current.exportImage("png");
+            setCanvasImage(dataURL);
+            console.log("Canvas Image Base64:", dataURL.slice(0, 50) + "...");
+        }
+        //const dataURL = canvasRef.current.getDataURL("png");
+        //setCanvasImage(dataURL);
+        //console.log("Canvas Image Base64:", dataURL.slice(0, 50) + "...");
     };
 
     return (
@@ -213,7 +218,6 @@ export default function PostWrite() {
             {postState === "error-wait" && <ErrorText />}
 
             <form onSubmit={submit} className={styles["post-write-form"]}>
-                {/* Body */}
                 <textarea
                     className={styles["post-write-body"]}
                     placeholder="Post Body"
@@ -221,7 +225,7 @@ export default function PostWrite() {
                     onChange={(e) => setPostBody(e.target.value)}
                 />
 
-                {/* Label */}
+
                 <div className={styles["label-container"]}>
                     <label className={styles["label-text"]}>Label</label>
                     <input
@@ -232,7 +236,7 @@ export default function PostWrite() {
                     />
                 </div>
 
-                {/* Group selection */}
+
                 <div className={styles["label-container"]}>
                     <label className={styles["label-text"]}>Select Group</label>
                     <select
@@ -256,7 +260,7 @@ export default function PostWrite() {
                     </select>
                 </div>
 
-                {/* Video upload */}
+
                 <div className={styles["label-container"]}>
                     <label className={styles["label-text"]}>Upload Video</label>
                     <input
@@ -271,25 +275,36 @@ export default function PostWrite() {
                 </button>
                 {showCanvas && (
                     <div style={{ marginTop: "10px" }}>
-                        <CanvasDraw
+                        <ReactSketchCanvas
                             ref={canvasRef}
                             canvasWidth={400}
                             canvasHeight={300}
-                            brushRadius={2}
-                            brushColor="#000"
-                            lazyRadius={0}
-                            hideGrid
+                            strokeWidth={2}
+                            strokeColor="#000"
+                            background="white"
                         />
-                        <div style={{ marginTop: "5px" }}>
+                        <div style={{marginTop: "5px"}}>
                             <button type="button" onClick={saveCanvasImage}>
                                 Save Drawing
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => canvasRef.current.clearCanvas()}
+                            >
+                                Clear
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => canvasRef.current.undo()}
+                            >
+                                Undo
                             </button>
                         </div>
                     </div>
                 )}
                 {canvasImage && (
-                    <div style={{ marginTop: "10px" }}>
-                        <p>Preview:</p>
+                    <div style={{marginTop: "10px"}}>
+                    <p>Preview:</p>
                         <img src={canvasImage} alt="canvas preview" width={200} />
                     </div>
                 )}

@@ -6,10 +6,10 @@ import LoginForm from "../components/LoginForm";
 export default function Login(props) {
     const [registrationMode, setRegistrationMode] = useState(false)
     return (
-        <div style={{ backgroundColor: "#b4d3f5", minHeight: "100vh", display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
+        <div style={{ backgroundColor: "#b4d3f5", flex: "1", display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
             {registrationMode ?
                 <RegistrationForm setRegistrationMode={setRegistrationMode} /> :
-                <LoginForm setRegistrationMode = {setRegistrationMode} onLogin={props.onLogin} />}
+                <LoginForm setRegistrationMode={setRegistrationMode} onLogin={props.onLogin} />}
         </div>
     )
 }

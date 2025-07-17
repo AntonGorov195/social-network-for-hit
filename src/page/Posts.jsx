@@ -31,6 +31,7 @@ export default function Posts(props) {
         }).then(response => {
             setSearchState("success");
             setUserId(response.data.userId);
+            console.log(response.data.posts)
             setPosts(response.data.posts);
         }).catch(error => {
             setSearchState("error");
